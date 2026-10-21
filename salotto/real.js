@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { ROOM, WALLS, OPENINGS } from './room.js';
 
-const PACK_URL = 'pack/salotto.bin?v=32'; // alzare il numero quando il pacchetto cambia: la cache del telefono lo rinnova
+const PACK_URL = 'pack/salotto.bin?v=33'; // alzare il numero quando il pacchetto cambia: la cache del telefono lo rinnova
 const KEY_STORE = 'salotto.key';
 const b64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
 

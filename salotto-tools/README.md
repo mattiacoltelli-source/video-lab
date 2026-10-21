@@ -22,7 +22,7 @@ Le foto e le scansioni 3D di casa **non** sono nel repo (il repo è pubblico): s
    - `reg/run_floor7.py 350 TAG 0.5` — il pavimento
    - `reg/bake_furniture7.py 0.5 TAG` — le facce dei mobili
    - `reg/paintings.py` — misura i 5 quadri e ne estrae la foto
-   - `reg/petra_hi.py` — il quadro di Petra da una sola foto nitida (939e9457) invece della media sfocata: cuoce una regione piu' grande a 1800 ppm, trova il rettangolo del quadro per colore e lo raddrizza sul vero 0,50 x 0,75 m (la posa di quella foto sbaglia di ~9 cm su questa parete); il risultato (`out/art_petra_hi.png`) si copia su `out/art_petra.png` prima di `build_pack.py`
+   - `reg/petra_hi.py` — il quadro di Petra da una sola foto nitida (939e9457) invece della media sfocata: cuoce una regione piu' grande a 1800 ppm, trova il rettangolo del quadro per colore e lo raddrizza sul vero 0,50 x 0,75 m (la posa di quella foto sbaglia di ~9 cm su questa parete); poi toglie dal quadrilatero l'ombra e il fianco chiaro del pannello visti di scorcio (23 colonne a sinistra, 10 righe in basso) e porta il tono dove stanno le foto frontali (la foto da vicino era 12-19% piu' scura del muro rispetto a loro: gamma 0,88 e un guadagno per canale, scarti residui entro 7%, il riferimento e' lo stesso dei quadri come il Taj); il risultato (`out/art_petra_hi.png`) si copia su `out/art_petra.png` prima di `build_pack.py`
 5. Le scansioni 3D (`.spz`, Scaniverse) danno la forma di ciò che le foto non rendono bene:
    - `scan/spzload.py` legge il file; `scan/photo_align*.py` lo allinea alla stanza massimizzando la correlazione con le foto
    - divano: `scan/sofa_hf.py` → `sofa_hf2.py` → `sofa_hf3.py` ricavano un campo di quote a 2 cm (senza i cuscini, che hanno `cushions.py` / `cushions2.py`);

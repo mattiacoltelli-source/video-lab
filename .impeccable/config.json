@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "salotto/index.html"
+        ],
+        "createdAt": "2026-10-21T12:05:03.504Z",
+        "reason": "Claude: false positive, evidence: computed style of both .editor elements is border-top 0px none, padding-top 0, transparent background (style.css:40 overrides the border declared at style.css:21), so there is no visible boundary; finding predates this session, .editor untouched"
+      }
+    ]
+  }
+}
