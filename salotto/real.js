@@ -311,6 +311,45 @@ function ceilingTexture() {
   return t;
 }
 
+
+// dettagli del disimpegno visti nelle foto e non nel pacchetto: cornice a gola in gesso, plafoniera tonda accesa, telecamera bianca sul muro di fondo, adattatore wifi con i led
+function corridorExtras(c) {
+  const g = new THREE.Group();
+  const { x0, x1, zn, zf, h } = c;
+  const mat = (col) => new THREE.MeshBasicMaterial({ color: col, toneMapped: false });
+  const box = (m, ax, ay, az, bx, by, bz) => { const o = new THREE.Mesh(new THREE.BoxGeometry(bx - ax, by - ay, bz - az), m); o.position.set((ax + bx) / 2, (ay + by) / 2, (az + bz) / 2); g.add(o); return o; };
+  // cornice a due gradini lungo i quattro bordi del soffitto (si legge dalla luce: gradino basso piu' chiaro, gradino alto in ombra)
+  const A = mat(0xe9e2d2), B = mat(0xf4efe3);
+  const ring = (inset, drop, m) => { // bordo perimetrale: lati lungo x e lungo z
+    const t = inset;
+    box(m, x0, h - drop, zf, x1, h, zf + t);
+    box(m, x0, h - drop, zn - t, x1, h, zn);
+    box(m, x0, h - drop, zf + t, x0 + t, h, zn - t);
+    box(m, x1 - t, h - drop, zf + t, x1, h, zn - t);
+  };
+  ring(0.07, 0.035, A); ring(0.04, 0.075, B);
+  // plafoniera: disco di vetro satinato al centro del soffitto, con alone
+  const cx = (x0 + x1) / 2, cz = (zn + zf) / 2;
+  const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.05, 40), mat(0xfffdf4)); lamp.position.set(cx, h - 0.025, cz); g.add(lamp);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+  const cx2 = cv.getContext('2d'); const gr = cx2.createRadialGradient(64, 64, 8, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,250,235,0.55)'); gr.addColorStop(1, 'rgba(255,250,235,0)'); cx2.fillStyle = gr; cx2.fillRect(0, 0, 128, 128);
+  const gt = new THREE.CanvasTexture(cv); gt.colorSpace = THREE.SRGBColorSpace;
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({ map: gt, transparent: true, depthWrite: false, toneMapped: false }));
+  glow.rotation.x = Math.PI / 2; glow.position.set(cx, h - 0.004, cz); g.add(glow);
+  // telecamera bianca: corpo a capsula e occhio scuro, sul muro di fondo sopra l'architrave della porta
+  const cam = new THREE.Group(); cam.position.set(1.10, 2.28, zf);
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.022, 0.075, 4, 12), mat(0xf2f2ef)); body.position.z = 0.03; cam.add(body);
+  const eye = new THREE.Mesh(new THREE.CircleGeometry(0.012, 16), mat(0x14161a)); eye.position.set(0, 0.03, 0.054); cam.add(eye);
+  g.add(cam);
+  // adattatore wifi alla presa (vicino allo zoccolo, a destra della porta di fondo): corpo bianco e due led azzurri
+  const ad = new THREE.Group(); ad.position.set(1.12, 0.30, zf);
+  const ab = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.11, 0.035), mat(0xf4f4f2)); ab.position.z = 0.0175; ad.add(ab);
+  for (const dy of [-0.02, 0.0]) { const l = new THREE.Mesh(new THREE.CircleGeometry(0.004, 8), mat(0x4aa8ff)); l.position.set(0.012, dy, 0.036); ad.add(l); }
+  g.add(ad);
+  return g;
+}
+
 export function createReal(ctx) {
   const { renderer, roomRoot, groups, pieces, render } = ctx;
   const group = new THREE.Group();
@@ -328,6 +367,12 @@ export function createReal(ctx) {
   let archDeep = false;
   const applyArch = () => { for (const a of archSets) { a.deep.forEach((m) => { m.visible = on && archDeep; }); a.flat.visible = on && !archDeep; } corrGroup.visible = on && archDeep; };
   const arts = {};
+  let clipped = false;
+  const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 2.7); // tiene tutto sotto la quota del soffitto del disimpegno
+  const setClip = (v) => {
+    clipped = v; renderer.localClippingEnabled = true; clipPlane.constant = pack?.corridor ? pack.corridor.h - 0.01 : 2.69;
+    corrGroup.traverse((o) => { if (!o.material) return; for (const m of [].concat(o.material)) { m.clippingPlanes = v ? [clipPlane] : null; m.needsUpdate = true; } });
+  };
   let pack = null, loading = null, on = false;
   const loader = new THREE.TextureLoader();
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -561,6 +606,7 @@ export function createReal(ctx) {
       groups[wid].add(h); wallObjs.push(h);
     }
     for (const m of deepPrims) corrGroup.add(m);
+    if (man.corridor && man.corridor.x1) corrGroup.add(corridorExtras(man.corridor));
     pack = { solid, spawn: man.spawn || { pos: [1.6, 1.6, 3.9], yaw: 0 }, floorTex: T[man.floor], corridor: man.corridor && man.corridor.x1 ? man.corridor : null };
   }
 
@@ -598,8 +644,10 @@ export function createReal(ctx) {
       const room = p.x > 0.02 && p.x < ROOM.L - 0.02 && p.z > 0.02 && p.z < ROOM.W - 0.02 && p.y < ROOM.H;
       const corr = !!c && p.x > c.x0 && p.x < c.x1 && p.z <= 0.02 && p.z > c.zf && p.y < c.h; // dentro il passaggio o il disimpegno
       const inside = room || corr;
-      if (inside === archDeep) return false;
-      archDeep = inside; applyArch();
+      const above = !!c && !inside && p.y > c.h; // vista dall'alto: il disimpegno si vede da sopra, senza soffitto
+      const want = inside || above;
+      if (want === archDeep && above === clipped) return false;
+      archDeep = want; setClip(above); applyArch();
       return on;
     },
     setLook(v) {
