@@ -367,6 +367,12 @@ export function createReal(ctx) {
   let archDeep = false;
   const applyArch = () => { for (const a of archSets) { a.deep.forEach((m) => { m.visible = on && archDeep; }); a.flat.visible = on && !archDeep; } corrGroup.visible = on && archDeep; };
   const arts = {};
+  let clipped = false;
+  const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 2.7); // tiene tutto sotto la quota del soffitto del disimpegno
+  const setClip = (v) => {
+    clipped = v; renderer.localClippingEnabled = true; clipPlane.constant = pack?.corridor ? pack.corridor.h - 0.01 : 2.69;
+    corrGroup.traverse((o) => { if (!o.material) return; for (const m of [].concat(o.material)) { m.clippingPlanes = v ? [clipPlane] : null; m.needsUpdate = true; } });
+  };
   let pack = null, loading = null, on = false;
   const loader = new THREE.TextureLoader();
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -638,8 +644,10 @@ export function createReal(ctx) {
       const room = p.x > 0.02 && p.x < ROOM.L - 0.02 && p.z > 0.02 && p.z < ROOM.W - 0.02 && p.y < ROOM.H;
       const corr = !!c && p.x > c.x0 && p.x < c.x1 && p.z <= 0.02 && p.z > c.zf && p.y < c.h; // dentro il passaggio o il disimpegno
       const inside = room || corr;
-      if (inside === archDeep) return false;
-      archDeep = inside; applyArch();
+      const above = !!c && !inside && p.y > c.h; // vista dall'alto: il disimpegno si vede da sopra, senza soffitto
+      const want = inside || above;
+      if (want === archDeep && above === clipped) return false;
+      archDeep = want; setClip(above); applyArch();
       return on;
     },
     setLook(v) {
