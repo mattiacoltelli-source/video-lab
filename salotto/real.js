@@ -350,6 +350,30 @@ function corridorExtras(c) {
   return g;
 }
 
+// la porta in fondo sul muro destro del disimpegno (nelle foto fa pendant con quella del muro sinistro): copia riflessa di cornice, foglia e maniglia della porta sinistra
+function rightDoor(c, by) {
+  const g = new THREE.Group();
+  const subset = (m, keep) => {
+    const geo = m.geometry, pos = geo.attributes.position, idx = geo.index ? geo.index.array : null;
+    if (!idx) return null;
+    const out = [];
+    for (let i = 0; i < idx.length; i += 3) {
+      const v = [0, 1, 2].map((k) => [pos.getX(idx[i + k]), pos.getY(idx[i + k]), pos.getZ(idx[i + k])]);
+      if (keep(v)) out.push(idx[i], idx[i + 1], idx[i + 2]);
+    }
+    if (!out.length) return null;
+    const ng = geo.clone(); ng.setIndex(out);
+    const o = new THREE.Mesh(ng, m.material); o.position.copy(m.position); o.rotation.copy(m.rotation); o.scale.copy(m.scale);
+    return o;
+  };
+  const left = (v) => v.every((p) => p[0] < 0.12) && v.some((p) => p[1] > 0.08);
+  for (const bin of ['cm_corr_trim', 'cm_corr_handles']) { const m = by[bin]; const o = m && subset(m, left); if (o) g.add(o); }
+  if (by.cm_corr_leaf3) g.add(by.cm_corr_leaf3.clone());
+  if (!g.children.length) return null;
+  g.scale.x = -1; g.position.x = c.x0 + c.x1; // specchio rispetto alla mezzeria del disimpegno
+  return g;
+}
+
 export function createReal(ctx) {
   const { renderer, roomRoot, groups, pieces, render } = ctx;
   const group = new THREE.Group();
@@ -595,8 +619,8 @@ export function createReal(ctx) {
     if (man.vox && man.vox.length) stage.add(buildVox(man.vox, plain, base, man));
     for (const it of man.items || []) stage.add(softItem(it));
     const blob = (name) => { const im = man.images[name]; return plain.slice(base + im.o, base + im.o + im.n); };
-    const deepPrims = [], wallPrims = [];
-    for (const p of man.prims || []) { const m = primMesh(p, T, blob); if (p.deep) { deepPrims.push(m); } else if (p.wall) wallPrims.push([p.wall, m]); else stage.add(m); } // piccoli oggetti: lampada, vasi, portabottiglie, mensole con pianta e fumetti; i 'deep' (corridoio) seguono l'arco; i 'wall' (le porte) restano attaccati alla loro parete
+    const deepPrims = [], wallPrims = [], deepByBin = {};
+    for (const p of man.prims || []) { const m = primMesh(p, T, blob); if (p.deep) { deepPrims.push(m); deepByBin[p.bin] = m; } else if (p.wall) wallPrims.push([p.wall, m]); else stage.add(m); } // piccoli oggetti: lampada, vasi, portabottiglie, mensole con pianta e fumetti; i 'deep' (corridoio) seguono l'arco; i 'wall' (le porte) restano attaccati alla loro parete
     for (const id of Object.keys(man.art || {})) arts[id] = T[man.art[id]];
     group.add(stage);
     for (const m of walls) { groups[m.userData.wall].add(m); pieces.push(m); wallMeshes.push(m); }
@@ -606,7 +630,7 @@ export function createReal(ctx) {
       groups[wid].add(h); wallObjs.push(h);
     }
     for (const m of deepPrims) corrGroup.add(m);
-    if (man.corridor && man.corridor.x1) corrGroup.add(corridorExtras(man.corridor));
+    if (man.corridor && man.corridor.x1) { corrGroup.add(corridorExtras(man.corridor)); const rd = rightDoor(man.corridor, deepByBin); if (rd) { corrGroup.add(rd); deepPrims.push(rd); } }
     pack = { solid, spawn: man.spawn || { pos: [1.6, 1.6, 3.9], yaw: 0 }, floorTex: T[man.floor], corridor: man.corridor && man.corridor.x1 ? man.corridor : null };
   }
 
