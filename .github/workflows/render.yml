@@ -46,7 +46,7 @@ jobs:
         run: npm run check
 
       - name: Render MP4
-        run: npm run render -- . --output out/video.mp4
+        run: npm run render -- . --output out/video.mp4 --fps 60 --quality delivery
 
       - name: Upload video
         uses: actions/upload-artifact@v4
