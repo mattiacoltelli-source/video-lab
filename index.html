@@ -8,115 +8,118 @@
       * { margin: 0; padding: 0; box-sizing: border-box; }
       @font-face { font-family: "Inter"; font-weight: 600; src: url("assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
       @font-face { font-family: "Inter"; font-weight: 700; src: url("assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
-      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #070a12; }
-      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #070a12; font-family: "Inter", sans-serif; color: #fff; }
-      .scene { position: absolute; inset: 0; overflow: hidden; background: #070a12; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #070f24; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #070f24; font-family: "Inter", sans-serif; color: #f2f4f8; }
+      .scene { position: absolute; inset: 0; overflow: hidden; background: #070f24; }
       .fade { position: absolute; inset: 0; }
-      .glow { position: absolute; border-radius: 50%; filter: blur(120px); }
-      .g1 { width: 800px; height: 800px; left: -300px; top: 150px; background: rgba(56,160,230,0.28); }
-      .g2 { width: 700px; height: 700px; right: -300px; top: 850px; background: rgba(255,150,70,0.20); }
-      .phone { position: absolute; left: 224px; top: 190px; width: 633px; height: 1300px; border-radius: 64px; padding: 12px; background: #1b2336; box-shadow: 0 30px 90px rgba(0,0,0,0.6), 0 0 0 2px #2c3852; }
-      .screen { position: relative; width: 100%; height: 100%; border-radius: 52px; overflow: hidden; background: #0a0e18; }
-      .scr { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-      .shade { position: absolute; left: 0; width: 100%; }
-      .shade-bottom { bottom: 0; height: 520px; background: linear-gradient(to top, rgba(7,10,18,0.95), rgba(7,10,18,0)); }
-      .bar { width: 96px; height: 10px; border-radius: 5px; background: linear-gradient(90deg,#4fb8ff,#ff9f4d); margin-bottom: 24px; }
-      .cap { position: absolute; left: 72px; right: 72px; bottom: 300px; }
-      .cap h2 { font-size: 76px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.06; text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
-      .logo { font-weight: 700; letter-spacing: -0.03em; background: linear-gradient(90deg,#4fc3ff 0%,#8fd0ff 40%,#ffb066 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-      .intro { position: absolute; left: 0; right: 0; top: 50%; margin-top: -260px; text-align: center; }
-      .intro .emoji { font-size: 1px; }
-      .intro h1 { font-size: 170px; line-height: 1.05; }
-      .intro p { margin-top: 36px; font-size: 56px; font-weight: 600; color: #aeb9cf; }
-      .outro-h { position: absolute; left: 72px; right: 72px; top: 1330px; text-align: center; }
-      .outro-h h1 { font-size: 150px; line-height: 1.05; }
-      .outro-h p { margin-top: 24px; font-size: 54px; font-weight: 600; color: #cfd8ea; }
-      .phone.small { left: 293px; top: 120px; width: 493px; height: 1000px; border-radius: 52px; padding: 10px; }
-      .phone.small .screen { border-radius: 42px; }
+      .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .tint { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 38%, rgba(20,48,110,0.25), rgba(5,10,28,0.7)); }
+      .frame { position: absolute; left: 0; width: 1080px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.55); }
+      .pan { position: absolute; inset: 0; will-change: transform; }
+      .pan img { display: block; width: 100%; height: 100%; }
+      .sweep { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0) 62%); mix-blend-mode: screen; }
+      .shade { position: absolute; left: 0; bottom: 0; width: 100%; height: 640px; background: linear-gradient(to top, rgba(5,10,28,0.96), rgba(5,10,28,0)); }
+      .bar { width: 96px; height: 8px; border-radius: 4px; background: linear-gradient(90deg,#e9edf3,#d9ad5c); margin-bottom: 26px; }
+      .cap { position: absolute; left: 80px; right: 80px; bottom: 330px; }
+      .cap h2 { font-size: 84px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+      .brand { font-weight: 700; letter-spacing: -0.03em; background: linear-gradient(90deg,#f4f6fa 0%,#c9d2e0 45%,#e3b86a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .intro { position: absolute; left: 0; right: 0; top: 50%; margin-top: -230px; text-align: center; }
+      .intro h1 { font-size: 190px; line-height: 1.05; }
+      .intro p { margin-top: 34px; font-size: 56px; font-weight: 600; color: #aebbd2; }
+      .glow { position: absolute; border-radius: 50%; filter: blur(130px); }
+      .g1 { width: 900px; height: 900px; left: -350px; top: 100px; background: rgba(40,90,200,0.35); }
+      .g2 { width: 700px; height: 700px; right: -300px; top: 1000px; background: rgba(217,173,92,0.18); }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="41.6" data-width="1080" data-height="1920">
-      <div id="s-intro" class="clip scene" data-start="0" data-duration="3.6" data-track-index="1">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30.5" data-width="1080" data-height="1920">
+      <div id="s-intro" class="clip scene" data-start="0" data-duration="3.5" data-track-index="1">
         <div id="s-intro-fade" class="fade">
           <div class="glow g1"></div><div class="glow g2"></div>
           <div id="s-intro-txt" class="intro">
-            <h1 class="logo">CineFighi</h1>
-            <p>Film e serie TV, insieme</p>
+            <h1 class="brand">Lesna Lab</h1>
+            <p>Bracciali incisi su misura</p>
           </div>
         </div>
       </div>
-      <div id="s-home" class="clip scene" data-start="3.1" data-duration="3.5" data-track-index="2">
-        <div id="s-home-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-home-ph" class="phone"><div class="screen"><img class="scr" src="assets/app/home.jpg" alt="" /></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-home-cap" class="cap"><div class="bar"></div><h2>Cerca ogni film<br>e serie TV</h2></div>
+      <div id="s0" class="clip scene" data-start="3.0" data-duration="4.5" data-track-index="1">
+        <div id="s0-fade" class="fade">
+          <img class="bg" src="assets/photos/b1-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:416px;height:829px">
+            <div id="s0-pan" class="pan" style="transform-origin:464px 464px"><img src="assets/photos/b1.jpg" alt="" /></div>
+            <div id="s0-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s0-cap" class="cap"><div class="bar"></div><h2>Le tue coordinate</h2></div>
         </div>
       </div>
-      <div id="s-dett" class="clip scene" data-start="6.1" data-duration="3.5" data-track-index="1">
-        <div id="s-dett-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-dett-ph" class="phone"><div class="screen"><img class="scr" src="assets/app/dettaglio.jpg" alt="" /></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-dett-cap" class="cap"><div class="bar"></div><h2>Vota e confronta<br>con il gruppo</h2></div>
+      <div id="s1" class="clip scene" data-start="7.0" data-duration="4.5" data-track-index="2">
+        <div id="s1-fade" class="fade">
+          <img class="bg" src="assets/photos/b2-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:328px;height:1004px">
+            <div id="s1-pan" class="pan" style="transform-origin:447px 707px"><img src="assets/photos/b2.jpg" alt="" /></div>
+            <div id="s1-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s1-cap" class="cap"><div class="bar"></div><h2>Il tuo nome</h2></div>
         </div>
       </div>
-      <div id="s-class" class="clip scene" data-start="9.1" data-duration="6.5" data-track-index="2">
-        <div id="s-class-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-class-ph" class="phone"><div class="screen"><video id="v-class" class="scr" src="assets/app/stats.mp4" muted playsinline data-start="9.1" data-duration="6.5" data-track-index="4"></video></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-class-cap" class="cap"><div class="bar"></div><h2>La classifica:<br>tua e del gruppo</h2></div>
+      <div id="s2" class="clip scene" data-start="11.0" data-duration="4.5" data-track-index="1">
+        <div id="s2-fade" class="fade">
+          <img class="bg" src="assets/photos/b3-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:461px;height:738px">
+            <div id="s2-pan" class="pan" style="transform-origin:568px 512px"><img src="assets/photos/b3.jpg" alt="" /></div>
+            <div id="s2-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s2-cap" class="cap"><div class="bar"></div><h2>Date e ricordi</h2></div>
         </div>
       </div>
-      <div id="s-gen" class="clip scene" data-start="15.1" data-duration="3.5" data-track-index="1">
-        <div id="s-gen-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-gen-ph" class="phone"><div class="screen"><img class="scr" src="assets/app/generi.jpg" alt="" /></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-gen-cap" class="cap"><div class="bar"></div><h2>I generi<br>più votati</h2></div>
+      <div id="s3" class="clip scene" data-start="15.0" data-duration="4.5" data-track-index="2">
+        <div id="s3-fade" class="fade">
+          <img class="bg" src="assets/photos/b4-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:432px;height:796px">
+            <div id="s3-pan" class="pan" style="transform-origin:549px 432px"><img src="assets/photos/b4.jpg" alt="" /></div>
+            <div id="s3-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s3-cap" class="cap"><div class="bar"></div><h2>Nome e simbolo</h2></div>
         </div>
       </div>
-      <div id="s-dna" class="clip scene" data-start="18.1" data-duration="7.0" data-track-index="2">
-        <div id="s-dna-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-dna-ph" class="phone"><div class="screen"><video id="v-dna" class="scr" src="assets/app/dna.mp4" muted playsinline data-start="18.1" data-duration="7.0" data-track-index="4"></video></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-dna-cap" class="cap"><div class="bar"></div><h2>Il DNA del gruppo:<br>la mappa dei gusti</h2></div>
+      <div id="s4" class="clip scene" data-start="19.0" data-duration="4.5" data-track-index="1">
+        <div id="s4-fade" class="fade">
+          <img class="bg" src="assets/photos/b5-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:440px;height:779px">
+            <div id="s4-pan" class="pan" style="transform-origin:589px 402px"><img src="assets/photos/b5.jpg" alt="" /></div>
+            <div id="s4-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s4-cap" class="cap"><div class="bar"></div><h2>Iniziali e data</h2></div>
         </div>
       </div>
-      <div id="s-rep" class="clip scene" data-start="24.6" data-duration="5.5" data-track-index="1">
-        <div id="s-rep-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-rep-ph" class="phone"><div class="screen"><video id="v-rep" class="scr" src="assets/app/report.mp4" muted playsinline data-start="24.6" data-duration="5.5" data-track-index="3"></video></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-rep-cap" class="cap"><div class="bar"></div><h2>Il tuo profilo,<br>scritto da Claude</h2></div>
+      <div id="s5" class="clip scene" data-start="23.0" data-duration="4.5" data-track-index="2">
+        <div id="s5-fade" class="fade">
+          <img class="bg" src="assets/photos/b6-bg.jpg" alt="" />
+          <div class="tint"></div>
+          <div class="frame" style="top:432px;height:797px">
+            <div id="s5-pan" class="pan" style="transform-origin:581px 403px"><img src="assets/photos/b6.jpg" alt="" /></div>
+            <div id="s5-sw" class="sweep"></div>
+          </div>
+          <div class="shade"></div>
+          <div id="s5-cap" class="cap"><div class="bar"></div><h2>Il luogo del cuore</h2></div>
         </div>
       </div>
-      <div id="s-tit" class="clip scene" data-start="29.6" data-duration="4.5" data-track-index="2">
-        <div id="s-tit-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-tit-ph" class="phone"><div class="screen"><video id="v-tit" class="scr" src="assets/app/titoli.mp4" muted playsinline data-start="29.6" data-duration="4.5" data-track-index="4"></video></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-tit-cap" class="cap"><div class="bar"></div><h2>10 titoli per te</h2></div>
-        </div>
-      </div>
-      <div id="s-chi" class="clip scene" data-start="33.6" data-duration="4.5" data-track-index="1">
-        <div id="s-chi-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-chi-ph" class="phone"><div class="screen"><video id="v-chi" class="scr" src="assets/app/chi.mp4" muted playsinline data-start="33.6" data-duration="4.5" data-track-index="3"></video></div></div>
-          <div class="shade shade-bottom"></div>
-          <div id="s-chi-cap" class="cap"><div class="bar"></div><h2>Chi siete,<br>uno per uno</h2></div>
-        </div>
-      </div>
-      <div id="s-outro" class="clip scene" data-start="37.6" data-duration="4.0" data-track-index="2">
+      <div id="s-outro" class="clip scene" data-start="27.0" data-duration="3.5" data-track-index="1">
         <div id="s-outro-fade" class="fade">
           <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-outro-ph" class="phone small"><div class="screen"><img class="scr" src="assets/app/login.jpg" alt="" /></div></div>
-          <div id="s-outro-txt" class="outro-h">
-            <h1 class="logo">CineFighi</h1>
-            <p>Chi sei tu? Entra e vota.</p>
+          <div id="s-outro-txt" class="intro">
+            <h1 class="brand">Lesna Lab</h1>
+            <p>Il tuo bracciale, inciso su misura</p>
           </div>
         </div>
       </div>
@@ -124,37 +127,47 @@
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      tl.fromTo("#s-intro-txt",{opacity:0,y:50,scale:0.96},{opacity:1,y:0,scale:1,duration:0.9,ease:"power3.out"},0.2);
-      tl.fromTo("#s-home-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},3.1);
-      tl.fromTo("#s-home-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:3.5,ease:"none",transformOrigin:"50% 50%"},3.1);
-      tl.fromTo("#s-home-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},3.5);
-      tl.fromTo("#s-dett-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},6.1);
-      tl.fromTo("#s-dett-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:3.5,ease:"none",transformOrigin:"50% 50%"},6.1);
-      tl.fromTo("#s-dett-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},6.5);
-      tl.fromTo("#s-class-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},9.1);
-      tl.fromTo("#s-class-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:6.5,ease:"none",transformOrigin:"50% 50%"},9.1);
-      tl.fromTo("#s-class-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},9.5);
-      tl.fromTo("#s-gen-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},15.1);
-      tl.fromTo("#s-gen-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:3.5,ease:"none",transformOrigin:"50% 50%"},15.1);
-      tl.fromTo("#s-gen-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},15.5);
-      tl.fromTo("#s-dna-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},18.1);
-      tl.fromTo("#s-dna-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:7.0,ease:"none",transformOrigin:"50% 50%"},18.1);
-      tl.fromTo("#s-dna-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},18.5);
-      tl.fromTo("#s-rep-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},24.6);
-      tl.fromTo("#s-rep-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:5.5,ease:"none",transformOrigin:"50% 50%"},24.6);
-      tl.fromTo("#s-rep-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},25.0);
-      tl.fromTo("#s-tit-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},29.6);
-      tl.fromTo("#s-tit-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:4.5,ease:"none",transformOrigin:"50% 50%"},29.6);
-      tl.fromTo("#s-tit-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},30.0);
-      tl.fromTo("#s-chi-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},33.6);
-      tl.fromTo("#s-chi-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:4.5,ease:"none",transformOrigin:"50% 50%"},33.6);
-      tl.fromTo("#s-chi-cap",{opacity:0,y:30},{opacity:1,y:0,duration:0.6,ease:"power2.out"},34.0);
-      tl.fromTo("#s-outro-fade",{opacity:0},{opacity:1,duration:0.5,ease:"power1.inOut"},37.6);
-      tl.fromTo("#s-outro-ph",{scale:1.0,y:40},{scale:1.03,y:0,duration:4.0,ease:"none",transformOrigin:"50% 50%"},37.6);
-      tl.fromTo("#s-outro-txt",{opacity:0,y:40},{opacity:1,y:0,duration:0.8,ease:"power3.out"},38.0);
-      tl.to("#s-outro-fade",{opacity:0,duration:0.5,ease:"power1.in"},41.1);
+      tl.fromTo("#s-intro-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.3);
+      tl.to("#s-intro-fade", { opacity: 0, duration: 0.5, ease: "none" }, 3.0);
+      tl.fromTo("#s0-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 3.0);
+      tl.to("#s0-fade", { opacity: 0, duration: 0.5, ease: "none" }, 7.0);
+      tl.fromTo("#s0-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 3.0);
+      tl.to("#s0-pan", { scale: 1.85, x: 76, y: -50, duration: 1.8, ease: "power2.inOut" }, 5.1);
+      tl.fromTo("#s0-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 3.5);
+      tl.fromTo("#s0-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.6);
+      tl.fromTo("#s1-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 7.0);
+      tl.to("#s1-fade", { opacity: 0, duration: 0.5, ease: "none" }, 11.0);
+      tl.fromTo("#s1-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 7.0);
+      tl.to("#s1-pan", { scale: 1.85, x: 93, y: -205, duration: 1.8, ease: "power2.inOut" }, 9.1);
+      tl.fromTo("#s1-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 7.5);
+      tl.fromTo("#s1-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 7.6);
+      tl.fromTo("#s2-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 11.0);
+      tl.to("#s2-fade", { opacity: 0, duration: 0.5, ease: "none" }, 15.0);
+      tl.fromTo("#s2-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 11.0);
+      tl.to("#s2-pan", { scale: 1.85, x: -28, y: -143, duration: 1.8, ease: "power2.inOut" }, 13.1);
+      tl.fromTo("#s2-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 11.5);
+      tl.fromTo("#s2-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 11.6);
+      tl.fromTo("#s3-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 15.0);
+      tl.to("#s3-fade", { opacity: 0, duration: 0.5, ease: "none" }, 19.0);
+      tl.fromTo("#s3-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 15.0);
+      tl.to("#s3-pan", { scale: 1.85, x: -9, y: -34, duration: 1.8, ease: "power2.inOut" }, 17.1);
+      tl.fromTo("#s3-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 15.5);
+      tl.fromTo("#s3-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 15.6);
+      tl.fromTo("#s4-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 19.0);
+      tl.to("#s4-fade", { opacity: 0, duration: 0.5, ease: "none" }, 23.0);
+      tl.fromTo("#s4-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 19.0);
+      tl.to("#s4-pan", { scale: 1.85, x: -49, y: -12, duration: 1.8, ease: "power2.inOut" }, 21.1);
+      tl.fromTo("#s4-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 19.5);
+      tl.fromTo("#s4-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 19.6);
+      tl.fromTo("#s5-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 23.0);
+      tl.to("#s5-fade", { opacity: 0, duration: 0.5, ease: "none" }, 27.0);
+      tl.fromTo("#s5-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 23.0);
+      tl.to("#s5-pan", { scale: 1.85, x: -41, y: -4, duration: 1.8, ease: "power2.inOut" }, 25.1);
+      tl.fromTo("#s5-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 23.5);
+      tl.fromTo("#s5-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 23.6);
+      tl.fromTo("#s-outro-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 27.0);
+      tl.fromTo("#s-outro-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 27.4);
       window.__timelines["main"] = tl;
-      tl.seek(0);
     </script>
   </body>
 </html>
