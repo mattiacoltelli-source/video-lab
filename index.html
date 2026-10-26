@@ -6,168 +6,229 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      @font-face { font-family: "Inter"; font-weight: 600; src: url("assets/fonts/inter-latin-600-normal.woff2") format("woff2"); }
-      @font-face { font-family: "Inter"; font-weight: 700; src: url("assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
-      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #161d33; }
-      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #161d33; font-family: "Inter", sans-serif; color: #f2eee6; }
-      .scene { position: absolute; inset: 0; overflow: hidden; background: #161d33; }
+      @font-face { font-family: "Fraunces"; font-weight: 100 900; src: url("assets/fonts/Fraunces-var.woff2") format("woff2"); }
+      @font-face { font-family: "Space Grotesk"; font-weight: 300 700; src: url("assets/fonts/SpaceGrotesk-var.woff2") format("woff2"); }
+      @font-face { font-family: "Allura"; font-weight: 400; src: url("assets/fonts/Allura.ttf") format("truetype"); }
+      :root { --navy: #212b47; --navy-2: #2d3a5e; --cream: #f2eee6; --paper: #fbf9f4; --coral: #e2552d; --coral-hi: #ff7b5c; --ink-soft: #4b546e; --cream-soft: #cfd0d6; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--navy); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--navy); font-family: "Space Grotesk", sans-serif; color: var(--cream); }
+      .scene { position: absolute; inset: 0; overflow: hidden; }
+      .scene.navy { background: var(--navy); }
+      .scene.cream { background: var(--cream); color: var(--navy); }
       .fade { position: absolute; inset: 0; }
-      .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-      .tint { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 38%, rgba(45,58,94,0.30), rgba(22,29,51,0.72)); }
-      .frame { position: absolute; left: 0; width: 1080px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.55); }
+      h1, h2 { font-family: "Fraunces", serif; font-weight: 700; line-height: 1.08; letter-spacing: -0.01em; font-variation-settings: "opsz" 144; }
+      .abs { position: absolute; left: 0; right: 0; text-align: center; }
+      .logo { display: block; margin: 0 auto; height: auto; }
+      /* hero */
+      .h-logo { top: 150px; } .h-logo .logo { width: 560px; }
+      .h-h1 { top: 430px; padding: 0 70px; font-size: 128px; }
+      .h-lede { top: 800px; padding: 0 130px; font-size: 46px; line-height: 1.35; color: var(--ink-soft); }
+      .plate { position: absolute; left: 90px; width: 900px; top: 1010px; height: 250px; border-radius: 22px; --p: -18%;
+        background: repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 2px, rgba(0,0,0,.035) 2px 4px, transparent 4px 8px), linear-gradient(180deg, #eef0f1 0%, #b6bcc0 44%, #d9dcde 56%, #a2a8ad 100%);
+        box-shadow: inset 0 2px 0 rgba(255,255,255,.9), inset 0 -4px 0 rgba(0,0,0,.28), 0 44px 56px -34px rgba(33,43,71,.65); }
+      .screw { position: absolute; top: 50%; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f4f6f7, #7d858a 70%); box-shadow: inset 0 0 0 2px rgba(0,0,0,.3), 0 2px 0 rgba(255,255,255,.6); }
+      .screw.l { left: 26px; } .screw.r { right: 26px; }
+      .eng { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }
+      .burn { position: relative; display: block; }
+      .engr { display: block; white-space: nowrap; font-family: "Allura", cursive; font-size: 128px; line-height: 1.1; color: #2a2e32; text-shadow: 0 2px 0 rgba(255,255,255,.7), 0 -2px 0 rgba(0,0,0,.22);
+        -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--p) - 18%), transparent var(--p)); mask-image: linear-gradient(90deg, #000 calc(var(--p) - 18%), transparent var(--p)); }
+      .laser { position: absolute; top: -22px; bottom: -22px; left: var(--p); width: 70px; margin-left: -35px; opacity: 0; pointer-events: none;
+        background: linear-gradient(90deg, transparent 46.5%, rgba(255,252,244,.95) 50%, transparent 53.5%), linear-gradient(90deg, transparent, rgba(255,250,238,.5) 50%, transparent); }
+      .chips { top: 1340px; display: flex; justify-content: center; gap: 18px; }
+      .chip { font-size: 36px; font-weight: 600; padding: 14px 28px; border-radius: 999px; border: 3px solid var(--navy); color: var(--navy); }
+      .chip.on { background: var(--navy); color: var(--cream); }
+      .btn { display: inline-flex; align-items: center; justify-content: center; height: 124px; padding: 0 64px; border-radius: 999px; font: 600 48px "Space Grotesk", sans-serif; }
+      .btn.solid { background: var(--navy); color: var(--cream); }
+      .btn.coral { background: var(--coral-hi); color: var(--navy); }
+      .h-btn { top: 1500px; }
+      /* foto */
+      .frame { position: absolute; left: 0; top: 0; width: 1080px; overflow: hidden; }
       .pan { position: absolute; inset: 0; will-change: transform; }
       .pan img { display: block; width: 100%; height: 100%; }
       .sweep { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0) 62%); mix-blend-mode: screen; }
-      .shade { position: absolute; left: 0; bottom: 0; width: 100%; height: 640px; background: linear-gradient(to top, rgba(22,29,51,0.96), rgba(22,29,51,0)); }
-      .bar { width: 96px; height: 8px; border-radius: 4px; background: linear-gradient(90deg,#f2eee6,#ff7b5c); margin-bottom: 26px; }
+      .shade { position: absolute; left: 0; bottom: 0; width: 100%; height: 760px; background: linear-gradient(to top, #f2eee6 0%, #f2eee6 38%, rgba(242,238,230,0.88) 62%, rgba(242,238,230,0)); }
       .cap { position: absolute; left: 80px; right: 80px; bottom: 330px; }
-      .cap h2 { font-size: 84px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
-      .brand { font-weight: 700; letter-spacing: -0.03em; background: linear-gradient(90deg,#f4f6fa 0%,#c9d2e0 45%,#e3b86a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-      .intro { position: absolute; left: 0; right: 0; top: 50%; margin-top: -230px; text-align: center; }
-      .logo { display: block; width: 880px; height: auto; margin: 0 auto; }
-      .intro h1 { font-size: 190px; line-height: 1.05; }
-      .intro p { margin-top: 34px; font-size: 56px; font-weight: 600; color: #cfd0d6; }
-      .glow { position: absolute; border-radius: 50%; filter: blur(130px); }
-      .g1 { width: 900px; height: 900px; left: -350px; top: 100px; background: rgba(45,58,94,0.75); }
-      .g2 { width: 700px; height: 700px; right: -300px; top: 1000px; background: rgba(226,85,45,0.22); }
+      .kick { font-size: 38px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coral); margin-bottom: 18px; }
+      .cap h2 { font-size: 100px; color: var(--navy); }
+      /* come funziona */
+      .s-h { position: absolute; left: 90px; right: 90px; top: 250px; font-size: 118px; }
+      .step { position: absolute; left: 90px; right: 90px; display: grid; grid-template-columns: 130px 1fr; column-gap: 30px; }
+      .step b { grid-row: span 2; font: 700 150px/1 "Fraunces", serif; color: var(--coral-hi); }
+      .step strong { font: 700 68px/1.15 "Fraunces", serif; }
+      .step span { margin-top: 12px; font-size: 44px; line-height: 1.35; color: var(--cream-soft); }
+      /* acciaio */
+      .m-h { position: absolute; left: 90px; right: 90px; top: 470px; font-size: 104px; white-space: nowrap; color: var(--navy); }
+      .m-p { position: absolute; left: 90px; right: 110px; font-size: 54px; line-height: 1.38; color: var(--ink-soft); }
+      /* chiusura */
+      .o-logo { top: 220px; } .o-logo .logo { width: 600px; }
+      .o-h { top: 640px; padding: 0 90px; font-size: 150px; }
+      .o-p { top: 900px; padding: 0 140px; font-size: 50px; line-height: 1.35; color: var(--cream-soft); }
+      .o-btn { top: 1180px; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="30.5" data-width="1080" data-height="1920">
-      <div id="s-intro" class="clip scene" data-start="0" data-duration="3.5" data-track-index="1">
-        <div id="s-intro-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-intro-txt" class="intro">
-            <img class="logo" src="assets/logo-lesna-lab.svg" alt="Lesna Lab" />
-            <p>Oggetti unici, creati per te</p>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="46.5" data-width="1080" data-height="1920">
+      <div id="hero" class="clip scene cream" data-start="0" data-duration="8.5" data-track-index="1">
+        <div id="hero-fade" class="fade">
+          <div id="h-logo" class="abs h-logo"><img class="logo" src="assets/logo-lesna-lab-navy.svg" alt="Lesna Lab" /></div>
+          <h1 id="h-h1" class="abs h-h1">Oggetti unici, creati per te.</h1>
+          <p id="h-lede" class="abs h-lede">Scrivi un nome, una data o una frase. La vedi incisa sul bracciale prima di ordinarlo.</p>
+          <div id="plate" class="plate">
+            <span class="screw l"></span><span class="screw r"></span>
+            <div class="eng"><span class="burn"><span id="e1" class="engr">Sempre al tuo fianco</span><span id="l1" class="laser"></span></span></div>
+            <div class="eng"><span class="burn"><span id="e2" class="engr">12.06.2019</span><span id="l2" class="laser"></span></span></div>
           </div>
+          <div id="chips" class="abs chips"><span id="c1" class="chip on">una frase</span><span id="c2" class="chip">una data</span><span class="chip">coordinate</span><span class="chip">due nomi</span></div>
+          <div id="h-btn" class="abs h-btn"><span class="btn solid">Scegli il bracciale →</span></div>
         </div>
       </div>
-      <div id="s0" class="clip scene" data-start="3.0" data-duration="4.5" data-track-index="1">
-        <div id="s0-fade" class="fade">
-          <img class="bg" src="assets/photos/b1-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:416px;height:829px">
-            <div id="s0-pan" class="pan" style="transform-origin:464px 464px"><img src="assets/photos/b1.jpg" alt="" /></div>
-            <div id="s0-sw" class="sweep"></div>
+      <div id="p0" class="clip scene cream" data-start="8.0" data-duration="4.5" data-track-index="1">
+        <div id="p0-fade" class="fade">
+          <div class="frame" style="height:1609px">
+            <div id="p0-pan" class="pan" style="transform-origin:440px 1035px"><img src="assets/photos/t2.jpg" alt="" /></div>
+            <div id="p0-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s0-cap" class="cap"><div class="bar"></div><h2>Le tue coordinate</h2></div>
+          <div id="p0-cap" class="cap"><div class="kick">Prova con</div><h2>Un nome</h2></div>
         </div>
       </div>
-      <div id="s1" class="clip scene" data-start="7.0" data-duration="4.5" data-track-index="2">
-        <div id="s1-fade" class="fade">
-          <img class="bg" src="assets/photos/b2-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:328px;height:1004px">
-            <div id="s1-pan" class="pan" style="transform-origin:447px 707px"><img src="assets/photos/b2.jpg" alt="" /></div>
-            <div id="s1-sw" class="sweep"></div>
+      <div id="p1" class="clip scene cream" data-start="12.0" data-duration="4.5" data-track-index="2">
+        <div id="p1-fade" class="fade">
+          <div class="frame" style="height:1606px">
+            <div id="p1-pan" class="pan" style="transform-origin:608px 828px"><img src="assets/photos/t4.jpg" alt="" /></div>
+            <div id="p1-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s1-cap" class="cap"><div class="bar"></div><h2>Il tuo nome</h2></div>
+          <div id="p1-cap" class="cap"><div class="kick">Prova con</div><h2>Nome e simbolo</h2></div>
         </div>
       </div>
-      <div id="s2" class="clip scene" data-start="11.0" data-duration="4.5" data-track-index="1">
-        <div id="s2-fade" class="fade">
-          <img class="bg" src="assets/photos/b3-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:461px;height:738px">
-            <div id="s2-pan" class="pan" style="transform-origin:568px 512px"><img src="assets/photos/b3.jpg" alt="" /></div>
-            <div id="s2-sw" class="sweep"></div>
+      <div id="p2" class="clip scene cream" data-start="16.0" data-duration="4.5" data-track-index="1">
+        <div id="p2-fade" class="fade">
+          <div class="frame" style="height:1609px">
+            <div id="p2-pan" class="pan" style="transform-origin:605px 908px"><img src="assets/photos/t5.jpg" alt="" /></div>
+            <div id="p2-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s2-cap" class="cap"><div class="bar"></div><h2>Date e ricordi</h2></div>
+          <div id="p2-cap" class="cap"><div class="kick">Prova con</div><h2>Due nomi e una data</h2></div>
         </div>
       </div>
-      <div id="s3" class="clip scene" data-start="15.0" data-duration="4.5" data-track-index="2">
-        <div id="s3-fade" class="fade">
-          <img class="bg" src="assets/photos/b4-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:432px;height:796px">
-            <div id="s3-pan" class="pan" style="transform-origin:549px 432px"><img src="assets/photos/b4.jpg" alt="" /></div>
-            <div id="s3-sw" class="sweep"></div>
+      <div id="p3" class="clip scene cream" data-start="20.0" data-duration="4.5" data-track-index="2">
+        <div id="p3-fade" class="fade">
+          <div class="frame" style="height:1609px">
+            <div id="p3-pan" class="pan" style="transform-origin:446px 653px"><img src="assets/photos/t1.jpg" alt="" /></div>
+            <div id="p3-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s3-cap" class="cap"><div class="bar"></div><h2>Nome e simbolo</h2></div>
+          <div id="p3-cap" class="cap"><div class="kick">Prova con</div><h2>Coordinate</h2></div>
         </div>
       </div>
-      <div id="s4" class="clip scene" data-start="19.0" data-duration="4.5" data-track-index="1">
-        <div id="s4-fade" class="fade">
-          <img class="bg" src="assets/photos/b5-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:440px;height:779px">
-            <div id="s4-pan" class="pan" style="transform-origin:589px 402px"><img src="assets/photos/b5.jpg" alt="" /></div>
-            <div id="s4-sw" class="sweep"></div>
+      <div id="p4" class="clip scene cream" data-start="24.0" data-duration="4.5" data-track-index="1">
+        <div id="p4-fade" class="fade">
+          <div class="frame" style="height:1606px">
+            <div id="p4-pan" class="pan" style="transform-origin:573px 876px"><img src="assets/photos/t3.jpg" alt="" /></div>
+            <div id="p4-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s4-cap" class="cap"><div class="bar"></div><h2>Iniziali e data</h2></div>
+          <div id="p4-cap" class="cap"><div class="kick">Prova con</div><h2>Una data e un luogo</h2></div>
         </div>
       </div>
-      <div id="s5" class="clip scene" data-start="23.0" data-duration="4.5" data-track-index="2">
-        <div id="s5-fade" class="fade">
-          <img class="bg" src="assets/photos/b6-bg.jpg" alt="" />
-          <div class="tint"></div>
-          <div class="frame" style="top:432px;height:797px">
-            <div id="s5-pan" class="pan" style="transform-origin:581px 403px"><img src="assets/photos/b6.jpg" alt="" /></div>
-            <div id="s5-sw" class="sweep"></div>
+      <div id="p5" class="clip scene cream" data-start="28.0" data-duration="4.5" data-track-index="2">
+        <div id="p5-fade" class="fade">
+          <div class="frame" style="height:1609px">
+            <div id="p5-pan" class="pan" style="transform-origin:545px 956px"><img src="assets/photos/t6.jpg" alt="" /></div>
+            <div id="p5-sw" class="sweep"></div>
           </div>
           <div class="shade"></div>
-          <div id="s5-cap" class="cap"><div class="bar"></div><h2>Il luogo del cuore</h2></div>
+          <div id="p5-cap" class="cap"><div class="kick">Prova con</div><h2>Il posto del cuore</h2></div>
         </div>
       </div>
-      <div id="s-outro" class="clip scene" data-start="27.0" data-duration="3.5" data-track-index="1">
-        <div id="s-outro-fade" class="fade">
-          <div class="glow g1"></div><div class="glow g2"></div>
-          <div id="s-outro-txt" class="intro">
-            <img class="logo" src="assets/logo-lesna-lab.svg" alt="Lesna Lab" />
-            <p>Bracciali incisi su misura</p>
-          </div>
+      <div id="steps" class="clip scene navy" data-start="32.0" data-duration="6.0" data-track-index="1">
+        <div id="steps-fade" class="fade">
+          <h2 id="s-h" class="s-h">Come funziona</h2>
+          <div id="st1" class="step" style="top:560px"><b>1</b><strong>Scegli il bracciale.</strong><span>Catena, rigido, pietre, cinturino o set di coppia.</span></div>
+          <div id="st2" class="step" style="top:900px"><b>2</b><strong>Scrivi cosa incidere.</strong><span>Un nome, una data, un luogo, una frase breve.</span></div>
+          <div id="st3" class="step" style="top:1240px"><b>3</b><strong>Ci scrivi su WhatsApp.</strong><span>Il messaggio parte già compilato con il modello e il tuo testo.</span></div>
+        </div>
+      </div>
+      <div id="mat" class="clip scene cream" data-start="37.5" data-duration="4.5" data-track-index="2">
+        <div id="mat-fade" class="fade">
+          <h2 id="m-h" class="m-h">Perché l'acciaio</h2>
+          <p id="m-p1" class="m-p" style="top:720px">Tutti i componenti sono in acciaio inossidabile: resistente, ipoallergenico, non si ossida e non cambia colore.</p>
+          <p id="m-p2" class="m-p" style="top:1130px">L'incisione laser scurisce il metallo stesso, senza smalti che si consumano: resta nitida nel tempo.</p>
+        </div>
+      </div>
+      <div id="outro" class="clip scene navy" data-start="41.5" data-duration="5.0" data-track-index="1">
+        <div id="outro-fade" class="fade">
+          <div id="o-logo" class="abs o-logo"><img class="logo" src="assets/logo-lesna-lab.svg" alt="Lesna Lab" /></div>
+          <h2 id="o-h" class="abs o-h">Parliamone</h2>
+          <p id="o-p" class="abs o-p">Hai già in mente cosa incidere? Scrivici e ti rispondiamo con tutti i dettagli.</p>
+          <div id="o-btn" class="abs o-btn"><span class="btn coral">Scrivici su WhatsApp</span></div>
         </div>
       </div>
     </div>
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      tl.fromTo("#s-intro-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.3);
-      tl.to("#s-intro-fade", { opacity: 0, duration: 0.5, ease: "none" }, 3.0);
-      tl.fromTo("#s0-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 3.0);
-      tl.to("#s0-fade", { opacity: 0, duration: 0.5, ease: "none" }, 7.0);
-      tl.fromTo("#s0-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 3.0);
-      tl.to("#s0-pan", { scale: 1.85, x: 76, y: -50, duration: 1.8, ease: "power2.inOut" }, 5.1);
-      tl.fromTo("#s0-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 3.5);
-      tl.fromTo("#s0-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.6);
-      tl.fromTo("#s1-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 7.0);
-      tl.to("#s1-fade", { opacity: 0, duration: 0.5, ease: "none" }, 11.0);
-      tl.fromTo("#s1-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 7.0);
-      tl.to("#s1-pan", { scale: 1.85, x: 93, y: -205, duration: 1.8, ease: "power2.inOut" }, 9.1);
-      tl.fromTo("#s1-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 7.5);
-      tl.fromTo("#s1-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 7.6);
-      tl.fromTo("#s2-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 11.0);
-      tl.to("#s2-fade", { opacity: 0, duration: 0.5, ease: "none" }, 15.0);
-      tl.fromTo("#s2-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 11.0);
-      tl.to("#s2-pan", { scale: 1.85, x: -28, y: -143, duration: 1.8, ease: "power2.inOut" }, 13.1);
-      tl.fromTo("#s2-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 11.5);
-      tl.fromTo("#s2-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 11.6);
-      tl.fromTo("#s3-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 15.0);
-      tl.to("#s3-fade", { opacity: 0, duration: 0.5, ease: "none" }, 19.0);
-      tl.fromTo("#s3-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 15.0);
-      tl.to("#s3-pan", { scale: 1.85, x: -9, y: -34, duration: 1.8, ease: "power2.inOut" }, 17.1);
-      tl.fromTo("#s3-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 15.5);
-      tl.fromTo("#s3-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 15.6);
-      tl.fromTo("#s4-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 19.0);
-      tl.to("#s4-fade", { opacity: 0, duration: 0.5, ease: "none" }, 23.0);
-      tl.fromTo("#s4-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 19.0);
-      tl.to("#s4-pan", { scale: 1.85, x: -49, y: -12, duration: 1.8, ease: "power2.inOut" }, 21.1);
-      tl.fromTo("#s4-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 19.5);
-      tl.fromTo("#s4-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 19.6);
-      tl.fromTo("#s5-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 23.0);
-      tl.to("#s5-fade", { opacity: 0, duration: 0.5, ease: "none" }, 27.0);
-      tl.fromTo("#s5-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.08, duration: 2.1, ease: "sine.inOut" }, 23.0);
-      tl.to("#s5-pan", { scale: 1.85, x: -41, y: -4, duration: 1.8, ease: "power2.inOut" }, 25.1);
-      tl.fromTo("#s5-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.7, ease: "power1.inOut" }, 23.5);
-      tl.fromTo("#s5-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 23.6);
-      tl.fromTo("#s-outro-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 27.0);
-      tl.fromTo("#s-outro-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 27.4);
+      const up = (id, t, y = 36, d = 0.8) => tl.fromTo(id, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, t);
+      // hero (come la home del sito: titolo, frase, targhetta incisa al laser)
+      up("#h-logo", 0.2); up("#h-h1", 0.5); up("#h-lede", 0.9); up("#plate", 1.2, 30); up("#chips", 1.6, 24); up("#h-btn", 6.2, 24);
+      tl.fromTo("#e1", { "--p": "-18%" }, { "--p": "120%", duration: 1.1, ease: "power2.inOut" }, 2.0);
+      tl.fromTo("#l1", { "--p": "-18%", opacity: 0 }, { "--p": "120%", duration: 1.1, ease: "power2.inOut" }, 2.0);
+      tl.fromTo("#l1", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 2.0).to("#l1", { opacity: 0, duration: 0.15 }, 3.0);
+      tl.to("#e1", { opacity: 0, duration: 0.4 }, 4.4);
+      tl.to("#c1", { backgroundColor: "rgba(33,43,71,0)", color: "#212b47", duration: 0.2 }, 4.4);
+      tl.to("#c2", { backgroundColor: "#212b47", color: "#f2eee6", duration: 0.2 }, 4.6);
+      tl.fromTo("#e2", { "--p": "-18%" }, { "--p": "120%", duration: 1.0, ease: "power2.inOut" }, 4.8);
+      tl.fromTo("#l2", { "--p": "-18%", opacity: 0 }, { "--p": "120%", duration: 1.0, ease: "power2.inOut" }, 4.8);
+      tl.fromTo("#l2", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 4.8).to("#l2", { opacity: 0, duration: 0.15 }, 5.65);
+      tl.to("#hero-fade", { opacity: 0, duration: 0.5, ease: "none" }, 8.0);
+      tl.fromTo("#p0-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 8.0);
+      tl.to("#p0-fade", { opacity: 0, duration: 0.5, ease: "none" }, 12.0);
+      tl.fromTo("#p0-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 8.0);
+      tl.to("#p0-pan", { scale: 1.5, x: 100, y: -355, duration: 1.7, ease: "power2.inOut" }, 10.0);
+      tl.fromTo("#p0-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 8.5);
+      tl.fromTo("#p0-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 8.6);
+      tl.fromTo("#p1-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 12.0);
+      tl.to("#p1-fade", { opacity: 0, duration: 0.5, ease: "none" }, 16.0);
+      tl.fromTo("#p1-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 12.0);
+      tl.to("#p1-pan", { scale: 1.5, x: -68, y: -148, duration: 1.7, ease: "power2.inOut" }, 14.0);
+      tl.fromTo("#p1-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 12.5);
+      tl.fromTo("#p1-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 12.6);
+      tl.fromTo("#p2-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 16.0);
+      tl.to("#p2-fade", { opacity: 0, duration: 0.5, ease: "none" }, 20.0);
+      tl.fromTo("#p2-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 16.0);
+      tl.to("#p2-pan", { scale: 1.5, x: -65, y: -228, duration: 1.7, ease: "power2.inOut" }, 18.0);
+      tl.fromTo("#p2-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 16.5);
+      tl.fromTo("#p2-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 16.6);
+      tl.fromTo("#p3-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 20.0);
+      tl.to("#p3-fade", { opacity: 0, duration: 0.5, ease: "none" }, 24.0);
+      tl.fromTo("#p3-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 20.0);
+      tl.to("#p3-pan", { scale: 1.5, x: 94, y: 27, duration: 1.7, ease: "power2.inOut" }, 22.0);
+      tl.fromTo("#p3-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 20.5);
+      tl.fromTo("#p3-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 20.6);
+      tl.fromTo("#p4-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 24.0);
+      tl.to("#p4-fade", { opacity: 0, duration: 0.5, ease: "none" }, 28.0);
+      tl.fromTo("#p4-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 24.0);
+      tl.to("#p4-pan", { scale: 1.5, x: -33, y: -196, duration: 1.7, ease: "power2.inOut" }, 26.0);
+      tl.fromTo("#p4-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 24.5);
+      tl.fromTo("#p4-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 24.6);
+      tl.fromTo("#p5-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 28.0);
+      tl.to("#p5-fade", { opacity: 0, duration: 0.5, ease: "none" }, 32.0);
+      tl.fromTo("#p5-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.05, duration: 2.0, ease: "sine.inOut" }, 28.0);
+      tl.to("#p5-pan", { scale: 1.5, x: -5, y: -276, duration: 1.7, ease: "power2.inOut" }, 30.0);
+      tl.fromTo("#p5-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 28.5);
+      tl.fromTo("#p5-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 28.6);
+      // come funziona
+      tl.fromTo("#steps-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 32.0);
+      up("#s-h", 32.3); up("#st1", 33.0); up("#st2", 34.0); up("#st3", 35.0);
+      tl.to("#steps-fade", { opacity: 0, duration: 0.5, ease: "none" }, 37.5);
+      // perche' l'acciaio
+      tl.fromTo("#mat-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 37.5);
+      up("#m-h", 37.8); up("#m-p1", 38.4); up("#m-p2", 39.6);
+      tl.to("#mat-fade", { opacity: 0, duration: 0.5, ease: "none" }, 41.5);
+      // chiusura
+      tl.fromTo("#outro-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 41.5);
+      up("#o-logo", 41.8); up("#o-h", 42.4); up("#o-p", 42.9); up("#o-btn", 43.6, 24);
       window.__timelines["main"] = tl;
     </script>
   </body>
