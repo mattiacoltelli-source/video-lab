@@ -6,184 +6,255 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      @font-face { font-family: "Fraunces"; font-weight: 100 900; src: url("assets/fonts/Fraunces-var.woff2") format("woff2"); }
-      @font-face { font-family: "Space Grotesk"; font-weight: 300 700; src: url("assets/fonts/SpaceGrotesk-var.woff2") format("woff2"); }
-      @font-face { font-family: "Allura"; font-weight: 400; src: url("assets/fonts/Allura.ttf") format("truetype"); }
-      :root { --navy: #212b47; --cream: #f2eee6; --coral: #e2552d; --coral-hi: #ff7b5c; --ink-soft: #4b546e; }
-      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--cream); }
-      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--cream); font-family: "Space Grotesk", sans-serif; color: var(--navy); }
-      .scene { position: absolute; inset: 0; overflow: hidden; background: var(--cream); }
+      @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url("assets/fonts/BarlowCondensed-Bold.ttf") format("truetype"); }
+      @font-face { font-family: "Barlow Condensed"; font-weight: 600; src: url("assets/fonts/BarlowCondensed-SemiBold.ttf") format("truetype"); }
+      :root { --ink: #3f444b; --lilac: #b093c0; --grey: #d9d9d7; --paper: #faf6f2; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #1c1d21; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #1c1d21; font-family: "Barlow Condensed", sans-serif; color: var(--paper); }
+      .scene { position: absolute; inset: 0; overflow: hidden; background: #1c1d21; }
+      .scene.paper { background: var(--paper); color: var(--ink); }
       .fade { position: absolute; inset: 0; }
-      h1, h2 { font-family: "Fraunces", serif; font-weight: 700; line-height: 1.08; letter-spacing: -0.01em; font-variation-settings: "opsz" 144; }
+      .zoom { position: absolute; inset: 0; transform-origin: 540px 960px; will-change: transform; }
+      .cam { position: absolute; left: 0; top: 0; height: 1920px; will-change: transform; }
+      .cam img { display: block; width: 100%; height: 100%; }
+      .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 900px; background: linear-gradient(to top, rgba(24,25,29,0.95) 0%, rgba(24,25,29,0.86) 26%, rgba(24,25,29,0.45) 60%, rgba(24,25,29,0)); }
+      .cap { position: absolute; left: 70px; right: 70px; top: 1180px; text-transform: uppercase; }
+      .bar { width: 150px; height: 12px; background: var(--lilac); transform-origin: left; margin-bottom: 24px; }
+      .kick { display: flex; align-items: center; gap: 18px; font: 600 44px "Barlow Condensed"; letter-spacing: 0.22em; color: #e8dcef; margin-bottom: 10px; }
+      .chip { width: 44px; height: 44px; border-radius: 50%; border: 3px solid rgba(250,246,242,0.9); display: inline-block; }
+      .ml { overflow: hidden; padding-bottom: 6px; }
+      .l1 { display: block; font: 600 112px/1.0 "Barlow Condensed"; letter-spacing: 0.04em; color: #e6e1da; }
+      .l2 { display: block; font: 700 200px/0.98 "Barlow Condensed"; letter-spacing: 0.01em; color: var(--paper); text-shadow: 0 8px 40px rgba(0,0,0,0.45); }
+      .wipe { position: absolute; inset: 0; z-index: 30; }
+      #badge { position: absolute; left: 60px; top: 282px; width: 340px; z-index: 20; opacity: 0; filter: drop-shadow(0 6px 24px rgba(0,0,0,0.35)); }
+      #badge img { display: block; width: 100%; height: auto; }
+      .vig { position: absolute; inset: 0; z-index: 25; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 58%, rgba(0,0,0,0.35)); }
       .abs { position: absolute; left: 0; right: 0; text-align: center; }
-      .logo { display: block; margin: 0 auto; height: auto; }
-      .i-logo { top: 640px; } .i-logo .logo { width: 880px; }
-      .i-tag { top: 1000px; padding: 0 120px; font-size: 96px; }
-      .i-sub { top: 1330px; padding: 0 150px; font-size: 46px; line-height: 1.35; color: var(--ink-soft); }
-      .w-h { position: absolute; left: 90px; right: 90px; top: 270px; font-size: 100px; white-space: nowrap; }
-      .w-p { position: absolute; left: 90px; right: 110px; top: 440px; font-size: 46px; line-height: 1.35; color: var(--ink-soft); }
-      .row { position: absolute; left: 90px; right: 90px; height: 190px; }
-      .row .lab { position: absolute; left: 0; top: 0; font: 700 56px/1 "Fraunces", serif; color: var(--coral); }
-      .row .plate { position: absolute; left: 0; right: 0; top: 70px; height: 120px; border-radius: 14px; display: grid; place-items: center;
-        background: repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 2px, rgba(0,0,0,.035) 2px 4px, transparent 4px 8px), linear-gradient(180deg, #eef0f1 0%, #b6bcc0 44%, #d9dcde 56%, #a2a8ad 100%);
-        box-shadow: inset 0 2px 0 rgba(255,255,255,.9), inset 0 -3px 0 rgba(0,0,0,.28), 0 26px 34px -22px rgba(33,43,71,.6); }
-      .row .plate span { font: 400 84px/1.1 "Allura", cursive; color: #2a2e32; text-shadow: 0 2px 0 rgba(255,255,255,.7), 0 -2px 0 rgba(0,0,0,.22); white-space: nowrap; }
-      .row .plate span.sm { font-size: 70px; }
-      .frame { position: absolute; left: 0; top: 0; width: 1080px; overflow: hidden; }
-      .pan { position: absolute; inset: 0; will-change: transform; }
-      .pan img { display: block; width: 100%; height: 100%; }
-      .sweep { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,0.42) 50%, rgba(255,255,255,0) 62%); mix-blend-mode: screen; }
-      .shade { position: absolute; left: 0; bottom: 0; width: 100%; height: 760px; background: linear-gradient(to top, #f2eee6 0%, #f2eee6 38%, rgba(242,238,230,0.88) 62%, rgba(242,238,230,0)); }
-      .mark { position: absolute; left: 50%; top: 1650px; width: 320px; margin-left: -160px; }
-      .cap { position: absolute; left: 80px; right: 80px; bottom: 330px; }
-      .kick { font-size: 38px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coral); margin-bottom: 18px; }
-      .cap h2 { font-size: 92px; color: var(--navy); }
+      .e-logo { top: 250px; } .e-logo img { width: 1080px; height: auto; display: block; margin: 0 auto; }
+      .e-chips { top: 1000px; display: flex; justify-content: center; gap: 26px; }
+      .ec { width: 86px; height: 86px; border-radius: 50%; display: inline-block; box-shadow: inset 0 0 0 3px rgba(63,68,75,0.18); }
+      .e-h { top: 1150px; font: 700 128px/1 "Barlow Condensed"; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink); }
+      .e-b { top: 1330px; }
+      .pill { display: inline-flex; align-items: center; justify-content: center; height: 128px; padding: 0 84px; border-radius: 999px; background: var(--lilac); color: #231f27; font: 700 66px "Barlow Condensed"; letter-spacing: 0.08em; text-transform: uppercase; box-shadow: 0 20px 50px rgba(176,147,192,0.55); }
+      .e-s { top: 1500px; font: 600 48px "Barlow Condensed"; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink); }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="40" data-width="1080" data-height="1920">
-      <div id="intro" class="clip scene" data-start="0" data-duration="3.5" data-track-index="1">
-        <div id="intro-fade" class="fade">
-          <div id="i-logo" class="abs i-logo"><img class="logo" src="assets/logo-lesna-lab-navy.svg" alt="Lesna Lab" /></div>
-          <h1 id="i-tag" class="abs i-tag">Oggetti unici, creati per te.</h1>
-        </div>
-      </div>
-      <div id="what" class="clip scene" data-start="3.0" data-duration="5.5" data-track-index="2">
-        <div id="what-fade" class="fade">
-          <h2 id="w-h" class="w-h">Cosa puoi incidere</h2>
-          <p id="w-p" class="w-p">Un nome, una data, un luogo, una frase breve.</p>
-          <div id="r1" class="row" style="top:640px"><div class="lab">Un nome</div><div class="plate"><span>Chiara</span></div></div>
-          <div id="r2" class="row" style="top:880px"><div class="lab">Una data</div><div class="plate"><span>14.02.2023</span></div></div>
-          <div id="r3" class="row" style="top:1120px"><div class="lab">Un luogo</div><div class="plate"><span class="sm">44.49° N, 11.34° E</span></div></div>
-          <div id="r4" class="row" style="top:1360px"><div class="lab">Una frase</div><div class="plate"><span class="sm">Sempre al tuo fianco</span></div></div>
-        </div>
-      </div>
-      <div id="p0" class="clip scene cream" data-start="8.0" data-duration="5.0" data-track-index="1">
-        <div id="p0-fade" class="fade">
-          <div class="frame" style="height:1609px">
-            <div id="p0-pan" class="pan" style="transform-origin:440px 1035px"><img src="assets/photos/t2.jpg" alt="" /></div>
-            <div id="p0-sw" class="sweep"></div>
-          </div>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="26.5" data-width="1080" data-height="1920">
+      <div id="s0" class="clip scene" data-start="0.00" data-duration="2.75" data-track-index="1">
+        <div id="s0-fade" class="fade">
+          <div class="zoom"><div id="s0-cam" class="cam" style="width:1920px"><img src="assets/simoni/p6.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p0-cap" class="cap"><div class="kick">Un nome</div><h2>Chiara</h2></div>
+          <div id="s0-cap" class="cap"><div class="bar"></div><div class="kick">Simoni Design</div><div class="ml"><span id="s0-l0" class="l1">Nasce dal</span></div><div class="ml"><span id="s0-l1" class="l2">metallo.</span></div></div>
         </div>
       </div>
-      <div id="p1" class="clip scene cream" data-start="12.5" data-duration="5.0" data-track-index="2">
-        <div id="p1-fade" class="fade">
-          <div class="frame" style="height:1606px">
-            <div id="p1-pan" class="pan" style="transform-origin:608px 828px"><img src="assets/photos/t4.jpg" alt="" /></div>
-            <div id="p1-sw" class="sweep"></div>
-          </div>
+      <div id="s1" class="clip scene" data-start="2.50" data-duration="2.25" data-track-index="2">
+        <div id="s1-fade" class="fade">
+          <div class="zoom"><div id="s1-cam" class="cam" style="width:1920px"><img src="assets/simoni/p6.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p1-cap" class="cap"><div class="kick">Nome e simbolo</div><h2>Isabella</h2></div>
+          <div id="s1-cap" class="cap"><div class="bar"></div><div class="kick">Carpenteria metallica</div><div class="ml"><span id="s1-l0" class="l1">Fatto</span></div><div class="ml"><span id="s1-l1" class="l2">a mano.</span></div></div>
         </div>
       </div>
-      <div id="p2" class="clip scene cream" data-start="17.0" data-duration="5.0" data-track-index="1">
-        <div id="p2-fade" class="fade">
-          <div class="frame" style="height:1609px">
-            <div id="p2-pan" class="pan" style="transform-origin:605px 908px"><img src="assets/photos/t5.jpg" alt="" /></div>
-            <div id="p2-sw" class="sweep"></div>
-          </div>
+      <div id="s2" class="clip scene" data-start="4.50" data-duration="2.25" data-track-index="1">
+        <div id="s2-fade" class="fade">
+          <div class="zoom"><div id="s2-cam" class="cam" style="width:1440px"><img src="assets/simoni/p2.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p2-cap" class="cap"><div class="kick">Due nomi e una data</div><h2>L &amp; M · 14.02.2023</h2></div>
+          <div id="s2-cap" class="cap"><div class="bar"></div><div class="kick">Falegnameria</div><div class="ml"><span id="s2-l0" class="l1">Poi si veste</span></div><div class="ml"><span id="s2-l1" class="l2">di colore.</span></div></div>
         </div>
       </div>
-      <div id="p3" class="clip scene cream" data-start="21.5" data-duration="5.0" data-track-index="2">
-        <div id="p3-fade" class="fade">
-          <div class="frame" style="height:1609px">
-            <div id="p3-pan" class="pan" style="transform-origin:446px 653px"><img src="assets/photos/t1.jpg" alt="" /></div>
-            <div id="p3-sw" class="sweep"></div>
-          </div>
+      <div id="s3" class="clip scene" data-start="6.50" data-duration="2.25" data-track-index="2">
+        <div id="s3-fade" class="fade">
+          <div class="zoom"><div id="s3-cam" class="cam" style="width:1440px"><img src="assets/simoni/p7.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p3-cap" class="cap"><div class="kick">Coordinate</div><h2>44.49° N, 11.34° E</h2></div>
+          <div id="s3-cap" class="cap"><div class="bar"></div><div class="kick">Sgabelli</div><div class="ml"><span id="s3-l0" class="l1">Cinque</span></div><div class="ml"><span id="s3-l1" class="l2">colori.</span></div></div>
         </div>
       </div>
-      <div id="p4" class="clip scene cream" data-start="26.0" data-duration="5.0" data-track-index="1">
-        <div id="p4-fade" class="fade">
-          <div class="frame" style="height:1606px">
-            <div id="p4-pan" class="pan" style="transform-origin:573px 876px"><img src="assets/photos/t3.jpg" alt="" /></div>
-            <div id="p4-sw" class="sweep"></div>
-          </div>
+      <div id="s4" class="clip scene" data-start="8.50" data-duration="1.75" data-track-index="1">
+        <div id="s4-fade" class="fade">
+          <div class="zoom"><div id="s4-cam" class="cam" style="width:1920px"><img src="assets/simoni/p5.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p4-cap" class="cap"><div class="kick">Una data e un luogo</div><h2>Emilia-Romagna</h2></div>
+          <div id="s4-cap" class="cap"><div class="bar"></div><div class="kick"><span class="chip" style="background:#6e7b1e"></span>01 / 05</div><div class="ml"><span id="s4-l0" class="l2">Verde</span></div></div>
         </div>
       </div>
-      <div id="p5" class="clip scene cream" data-start="30.5" data-duration="5.0" data-track-index="2">
-        <div id="p5-fade" class="fade">
-          <div class="frame" style="height:1609px">
-            <div id="p5-pan" class="pan" style="transform-origin:545px 956px"><img src="assets/photos/t6.jpg" alt="" /></div>
-            <div id="p5-sw" class="sweep"></div>
-          </div>
+      <div id="s5" class="clip scene" data-start="10.00" data-duration="1.75" data-track-index="2">
+        <div id="s5-fade" class="fade">
+          <div class="zoom"><div id="s5-cam" class="cam" style="width:1440px"><img src="assets/simoni/p10.jpg" alt="" /></div></div>
           <div class="shade"></div>
-          <img class="mark" src="assets/logo-lesna-lab-navy.svg" alt="" />
-          <div id="p5-cap" class="cap"><div class="kick">Il posto del cuore</div><h2>45.46° N, 9.19° E</h2></div>
+          <div id="s5-cap" class="cap"><div class="bar"></div><div class="kick"><span class="chip" style="background:#c1272d"></span>02 / 05</div><div class="ml"><span id="s5-l0" class="l2">Rosso</span></div></div>
         </div>
       </div>
-      <div id="outro" class="clip scene" data-start="35.0" data-duration="5.0" data-track-index="2">
-        <div id="outro-fade" class="fade">
-          <div id="o-logo" class="abs i-logo"><img class="logo" src="assets/logo-lesna-lab-navy.svg" alt="Lesna Lab" /></div>
-          <h1 id="o-tag" class="abs i-tag" style="font-size:84px">Bracciali in acciaio con la tua incisione.</h1>
+      <div id="s6" class="clip scene" data-start="11.50" data-duration="1.75" data-track-index="1">
+        <div id="s6-fade" class="fade">
+          <div class="zoom"><div id="s6-cam" class="cam" style="width:1440px"><img src="assets/simoni/p2.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s6-cap" class="cap"><div class="bar"></div><div class="kick"><span class="chip" style="background:#6b4430"></span>03 / 05</div><div class="ml"><span id="s6-l0" class="l2">Marrone</span></div></div>
         </div>
       </div>
+      <div id="s7" class="clip scene" data-start="13.00" data-duration="1.75" data-track-index="2">
+        <div id="s7-fade" class="fade">
+          <div class="zoom"><div id="s7-cam" class="cam" style="width:1440px"><img src="assets/simoni/p8.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s7-cap" class="cap"><div class="bar"></div><div class="kick"><span class="chip" style="background:#d2b79a"></span>04 / 05</div><div class="ml"><span id="s7-l0" class="l2">Beige</span></div></div>
+        </div>
+      </div>
+      <div id="s8" class="clip scene" data-start="14.50" data-duration="1.75" data-track-index="1">
+        <div id="s8-fade" class="fade">
+          <div class="zoom"><div id="s8-cam" class="cam" style="width:1440px"><img src="assets/simoni/p9.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s8-cap" class="cap"><div class="bar"></div><div class="kick"><span class="chip" style="background:#e0a020"></span>05 / 05</div><div class="ml"><span id="s8-l0" class="l2">Senape</span></div></div>
+        </div>
+      </div>
+      <div id="s9" class="clip scene" data-start="16.00" data-duration="2.25" data-track-index="2">
+        <div id="s9-fade" class="fade">
+          <div class="zoom"><div id="s9-cam" class="cam" style="width:1440px"><img src="assets/simoni/p8.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s9-cap" class="cap"><div class="bar"></div><div class="kick">In casa</div><div class="ml"><span id="s9-l0" class="l1">Nella tua</span></div><div class="ml"><span id="s9-l1" class="l2">cucina.</span></div></div>
+        </div>
+      </div>
+      <div id="s10" class="clip scene" data-start="18.00" data-duration="2.25" data-track-index="1">
+        <div id="s10-fade" class="fade">
+          <div class="zoom"><div id="s10-cam" class="cam" style="width:1920px"><img src="assets/simoni/p3.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s10-cap" class="cap"><div class="bar"></div><div class="kick">Il tuo stile</div><div class="ml"><span id="s10-l0" class="l1">Scegli</span></div><div class="ml"><span id="s10-l1" class="l2">il tuo.</span></div></div>
+        </div>
+      </div>
+      <div id="s11" class="clip scene" data-start="20.00" data-duration="2.25" data-track-index="2">
+        <div id="s11-fade" class="fade">
+          <div class="zoom"><div id="s11-cam" class="cam" style="width:1920px"><img src="assets/simoni/p4.jpg" alt="" /></div></div>
+          <div class="shade"></div>
+          <div id="s11-cap" class="cap"><div class="bar"></div><div class="kick">Un tocco di stile</div><div class="ml"><span id="s11-l0" class="l1">Un tocco</span></div><div class="ml"><span id="s11-l1" class="l2">di colore.</span></div></div>
+        </div>
+      </div>
+      <div id="end" class="clip scene paper" data-start="22.00" data-duration="4.5" data-track-index="1">
+        <div id="end-fade" class="fade">
+          <div id="e-logo" class="abs e-logo"><img src="assets/simoni/p11.jpg" alt="Simoni Design" /></div>
+          <div id="e-chips" class="abs e-chips"><span id="e-c0" class="ec" style="background:#6e7b1e"></span><span id="e-c1" class="ec" style="background:#c1272d"></span><span id="e-c2" class="ec" style="background:#6b4430"></span><span id="e-c3" class="ec" style="background:#d2b79a"></span><span id="e-c4" class="ec" style="background:#e0a020"></span></div>
+          <div id="e-h" class="abs e-h">Fatti a mano</div>
+          <div id="e-b" class="abs e-b"><span class="pill">Scrivici in DM</span></div>
+          <div id="e-s" class="abs e-s">Link in bio</div>
+        </div>
+      </div>
+      <div id="badge"><img src="assets/simoni/badge.png" alt="" /></div>
+      <div id="w0" class="wipe" style="background:#b093c0"></div><div id="w1" class="wipe" style="background:#b093c0"></div><div id="w2" class="wipe" style="background:#b093c0"></div><div id="w3" class="wipe" style="background:#6e7b1e"></div><div id="w4" class="wipe" style="background:#c1272d"></div><div id="w5" class="wipe" style="background:#6b4430"></div><div id="w6" class="wipe" style="background:#d2b79a"></div><div id="w7" class="wipe" style="background:#e0a020"></div><div id="w8" class="wipe" style="background:#b093c0"></div><div id="w9" class="wipe" style="background:#b093c0"></div><div id="w10" class="wipe" style="background:#b093c0"></div><div id="w11" class="wipe" style="background:#b093c0"></div>
+      <div class="vig"></div>
     </div>
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      const up = (id, t, y = 36, d = 0.8) => tl.fromTo(id, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, t);
-      up("#i-logo", 0.2); up("#i-tag", 0.9);
-      tl.to("#intro-fade", { opacity: 0, duration: 0.5, ease: "none" }, 3.0);
-      tl.fromTo("#what-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 3.0);
-      up("#w-h", 3.3); up("#w-p", 3.7); up("#r1", 4.2); up("#r2", 4.9); up("#r3", 5.6); up("#r4", 6.3);
-      tl.to("#what-fade", { opacity: 0, duration: 0.5, ease: "none" }, 8.0);
-      tl.fromTo("#p0-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 8.0);
-      tl.to("#p0-fade", { opacity: 0, duration: 0.5, ease: "none" }, 12.5);
-      tl.fromTo("#p0-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 8.0);
-      tl.to("#p0-pan", { scale: 1.55, x: 100, y: -315, duration: 1.3, ease: "power2.inOut" }, 9.7);
-      tl.to("#p0-pan", { x: -112, y: 569, duration: 1.2, ease: "power1.inOut" }, 11.3);
-      tl.fromTo("#p0-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 8.6);
-      tl.fromTo("#p0-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 8.5);
-      tl.fromTo("#p1-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 12.5);
-      tl.to("#p1-fade", { opacity: 0, duration: 0.5, ease: "none" }, 17.0);
-      tl.fromTo("#p1-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 12.5);
-      tl.to("#p1-pan", { scale: 1.55, x: -68, y: -148, duration: 1.3, ease: "power2.inOut" }, 14.2);
-      tl.to("#p1-pan", { x: 302, y: -420, duration: 1.2, ease: "power1.inOut" }, 15.8);
-      tl.fromTo("#p1-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 13.1);
-      tl.fromTo("#p1-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 13.0);
-      tl.fromTo("#p2-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 17.0);
-      tl.to("#p2-fade", { opacity: 0, duration: 0.5, ease: "none" }, 21.5);
-      tl.fromTo("#p2-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 17.0);
-      tl.to("#p2-pan", { scale: 1.55, x: -65, y: -228, duration: 1.3, ease: "power2.inOut" }, 18.7);
-      tl.to("#p2-pan", { x: 305, y: -386, duration: 1.2, ease: "power1.inOut" }, 20.3);
-      tl.fromTo("#p2-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 17.6);
-      tl.fromTo("#p2-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 17.5);
-      tl.fromTo("#p3-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 21.5);
-      tl.to("#p3-fade", { opacity: 0, duration: 0.5, ease: "none" }, 26.0);
-      tl.fromTo("#p3-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 21.5);
-      tl.to("#p3-pan", { scale: 1.55, x: 94, y: 27, duration: 1.3, ease: "power2.inOut" }, 23.2);
-      tl.to("#p3-pan", { x: -262, y: 27, duration: 1.2, ease: "power1.inOut" }, 24.8);
-      tl.fromTo("#p3-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 22.1);
-      tl.fromTo("#p3-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 22.0);
-      tl.fromTo("#p4-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 26.0);
-      tl.to("#p4-fade", { opacity: 0, duration: 0.5, ease: "none" }, 30.5);
-      tl.fromTo("#p4-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 26.0);
-      tl.to("#p4-pan", { scale: 1.55, x: -33, y: -196, duration: 1.3, ease: "power2.inOut" }, 27.7);
-      tl.to("#p4-pan", { x: 41, y: 298, duration: 1.2, ease: "power1.inOut" }, 29.3);
-      tl.fromTo("#p4-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 26.6);
-      tl.fromTo("#p4-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 26.5);
-      tl.fromTo("#p5-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 30.5);
-      tl.to("#p5-fade", { opacity: 0, duration: 0.5, ease: "none" }, 35.0);
-      tl.fromTo("#p5-pan", { scale: 1, x: 0, y: 0 }, { scale: 1.06, duration: 1.7, ease: "sine.inOut" }, 30.5);
-      tl.to("#p5-pan", { scale: 1.55, x: -5, y: -276, duration: 1.3, ease: "power2.inOut" }, 32.2);
-      tl.to("#p5-pan", { x: 267, y: -359, duration: 1.2, ease: "power1.inOut" }, 33.8);
-      tl.fromTo("#p5-sw", { xPercent: -140 }, { xPercent: 140, duration: 1.6, ease: "power1.inOut" }, 31.1);
-      tl.fromTo("#p5-cap", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 31.0);
-      tl.fromTo("#outro-fade", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 35.0);
-      up("#o-logo", 35.3); up("#o-tag", 36.0);
+      tl.to("#s0-fade", { opacity: 0, duration: 0.05, ease: "none" }, 2.70);
+      tl.fromTo("#s0-cam", { x: -36, y: 0 }, { x: -324, y: 0, duration: 2.75, ease: "power1.inOut" }, 0.00);
+      tl.fromTo("#s0 .zoom", { scale: 1.0 }, { scale: 1.25, duration: 2.75, ease: "power1.inOut" }, 0.00);
+      tl.fromTo("#s0-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 0.25);
+      tl.fromTo("#s0-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 0.30);
+      tl.fromTo("#s0-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 0.30);
+      tl.fromTo("#s0-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 0.40);
+      tl.to("#s1-fade", { opacity: 0, duration: 0.05, ease: "none" }, 4.70);
+      tl.fromTo("#s1-cam", { x: -958, y: 222 }, { x: -842, y: 341, duration: 2.25, ease: "power1.inOut" }, 2.50);
+      tl.fromTo("#s1 .zoom", { scale: 1.3 }, { scale: 1.55, duration: 2.25, ease: "power1.inOut" }, 2.50);
+      tl.fromTo("#s1-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 2.75);
+      tl.fromTo("#s1-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 2.80);
+      tl.fromTo("#s1-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 2.80);
+      tl.fromTo("#s1-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 2.90);
+      tl.to("#s2-fade", { opacity: 0, duration: 0.05, ease: "none" }, 6.70);
+      tl.fromTo("#s2-cam", { x: -108, y: 0 }, { x: -7, y: -160, duration: 2.25, ease: "power1.inOut" }, 4.50);
+      tl.fromTo("#s2 .zoom", { scale: 1.0 }, { scale: 1.2, duration: 2.25, ease: "power1.inOut" }, 4.50);
+      tl.fromTo("#s2-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 4.75);
+      tl.fromTo("#s2-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 4.80);
+      tl.fromTo("#s2-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 4.80);
+      tl.fromTo("#s2-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 4.90);
+      tl.to("#s3-fade", { opacity: 0, duration: 0.05, ease: "none" }, 8.70);
+      tl.fromTo("#s3-cam", { x: -180, y: -222 }, { x: -266, y: -284, duration: 2.25, ease: "power1.inOut" }, 6.50);
+      tl.fromTo("#s3 .zoom", { scale: 1.3 }, { scale: 1.42, duration: 2.25, ease: "power1.inOut" }, 6.50);
+      tl.fromTo("#s3-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 6.75);
+      tl.fromTo("#s3-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 6.80);
+      tl.fromTo("#s3-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 6.80);
+      tl.fromTo("#s3-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 6.90);
+      tl.to("#s4-fade", { opacity: 0, duration: 0.05, ease: "none" }, 10.20);
+      tl.fromTo("#s4-cam", { x: 0, y: 0 }, { x: 2, y: 192, duration: 1.75, ease: "power1.inOut" }, 8.50);
+      tl.fromTo("#s4 .zoom", { scale: 1.0 }, { scale: 1.3, duration: 1.75, ease: "power1.inOut" }, 8.50);
+      tl.fromTo("#s4-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 8.75);
+      tl.fromTo("#s4-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 8.80);
+      tl.fromTo("#s4-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 8.80);
+      tl.to("#s5-fade", { opacity: 0, duration: 0.05, ease: "none" }, 11.70);
+      tl.fromTo("#s5-cam", { x: 0, y: 0 }, { x: 108, y: -96, duration: 1.75, ease: "power1.inOut" }, 10.00);
+      tl.fromTo("#s5 .zoom", { scale: 1.0 }, { scale: 1.3, duration: 1.75, ease: "power1.inOut" }, 10.00);
+      tl.fromTo("#s5-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 10.25);
+      tl.fromTo("#s5-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 10.30);
+      tl.fromTo("#s5-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 10.30);
+      tl.to("#s6-fade", { opacity: 0, duration: 0.05, ease: "none" }, 13.20);
+      tl.fromTo("#s6-cam", { x: 0, y: 0 }, { x: 108, y: -192, duration: 1.75, ease: "power1.inOut" }, 11.50);
+      tl.fromTo("#s6 .zoom", { scale: 1.0 }, { scale: 1.3, duration: 1.75, ease: "power1.inOut" }, 11.50);
+      tl.fromTo("#s6-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 11.75);
+      tl.fromTo("#s6-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 11.80);
+      tl.fromTo("#s6-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 11.80);
+      tl.to("#s7-fade", { opacity: 0, duration: 0.05, ease: "none" }, 14.70);
+      tl.fromTo("#s7-cam", { x: -252, y: 0 }, { x: -252, y: -222, duration: 1.75, ease: "power1.inOut" }, 13.00);
+      tl.fromTo("#s7 .zoom", { scale: 1.0 }, { scale: 1.3, duration: 1.75, ease: "power1.inOut" }, 13.00);
+      tl.fromTo("#s7-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 13.25);
+      tl.fromTo("#s7-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 13.30);
+      tl.fromTo("#s7-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 13.30);
+      tl.to("#s8-fade", { opacity: 0, duration: 0.05, ease: "none" }, 16.20);
+      tl.fromTo("#s8-cam", { x: -65, y: 0 }, { x: -122, y: -38, duration: 1.75, ease: "power1.inOut" }, 14.50);
+      tl.fromTo("#s8 .zoom", { scale: 1.0 }, { scale: 1.25, duration: 1.75, ease: "power1.inOut" }, 14.50);
+      tl.fromTo("#s8-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 14.75);
+      tl.fromTo("#s8-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 14.80);
+      tl.fromTo("#s8-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 14.80);
+      tl.to("#s9-fade", { opacity: 0, duration: 0.05, ease: "none" }, 18.20);
+      tl.fromTo("#s9-cam", { x: -180, y: 0 }, { x: -295, y: -125, duration: 2.25, ease: "power1.inOut" }, 16.00);
+      tl.fromTo("#s9 .zoom", { scale: 1.0 }, { scale: 1.15, duration: 2.25, ease: "power1.inOut" }, 16.00);
+      tl.fromTo("#s9-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 16.25);
+      tl.fromTo("#s9-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 16.30);
+      tl.fromTo("#s9-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 16.30);
+      tl.fromTo("#s9-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 16.40);
+      tl.to("#s10-fade", { opacity: 0, duration: 0.05, ease: "none" }, 20.20);
+      tl.fromTo("#s10-cam", { x: -228, y: -160 }, { x: -612, y: -192, duration: 2.25, ease: "power1.inOut" }, 18.00);
+      tl.fromTo("#s10 .zoom", { scale: 1.2 }, { scale: 1.32, duration: 2.25, ease: "power1.inOut" }, 18.00);
+      tl.fromTo("#s10-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 18.25);
+      tl.fromTo("#s10-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 18.30);
+      tl.fromTo("#s10-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 18.30);
+      tl.fromTo("#s10-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 18.40);
+      tl.to("#s11-fade", { opacity: 0, duration: 0.05, ease: "none" }, 22.20);
+      tl.fromTo("#s11-cam", { x: -420, y: 0 }, { x: -535, y: 77, duration: 2.25, ease: "power1.inOut" }, 20.00);
+      tl.fromTo("#s11 .zoom", { scale: 1.0 }, { scale: 1.2, duration: 2.25, ease: "power1.inOut" }, 20.00);
+      tl.fromTo("#s11-cap .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 20.25);
+      tl.fromTo("#s11-cap .kick", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 20.30);
+      tl.fromTo("#s11-l0", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 20.30);
+      tl.fromTo("#s11-l1", { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "power3.out" }, 20.40);
+      tl.fromTo("#w0", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 2.28);
+      tl.to("#w0", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 2.50);
+      tl.fromTo("#w1", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 4.28);
+      tl.to("#w1", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 4.50);
+      tl.fromTo("#w2", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 6.28);
+      tl.to("#w2", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 6.50);
+      tl.fromTo("#w3", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 8.28);
+      tl.to("#w3", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 8.50);
+      tl.fromTo("#w4", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 9.78);
+      tl.to("#w4", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 10.00);
+      tl.fromTo("#w5", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 11.28);
+      tl.to("#w5", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 11.50);
+      tl.fromTo("#w6", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 12.78);
+      tl.to("#w6", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 13.00);
+      tl.fromTo("#w7", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 14.28);
+      tl.to("#w7", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 14.50);
+      tl.fromTo("#w8", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 15.78);
+      tl.to("#w8", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 16.00);
+      tl.fromTo("#w9", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 17.78);
+      tl.to("#w9", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 18.00);
+      tl.fromTo("#w10", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 19.78);
+      tl.to("#w10", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 20.00);
+      tl.fromTo("#w11", { xPercent: -101 }, { xPercent: 0, duration: 0.22, ease: "power2.in" }, 21.78);
+      tl.to("#w11", { xPercent: 101, duration: 0.26, ease: "power2.out" }, 22.00);
+      // badge del marchio durante le foto
+      tl.fromTo("#badge", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.5);
+      tl.to("#badge", { opacity: 0, duration: 0.2, ease: "none" }, 21.75);
+      tl.to(".vig", { opacity: 0, duration: 0.2, ease: "none" }, 21.90);
+      // chiusura
+      tl.fromTo("#e-logo", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 22.10);
+      tl.fromTo(".ec", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(2.4)", stagger: 0.1 }, 22.70);
+      tl.fromTo("#e-h", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 23.20);
+      tl.fromTo("#e-b", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 23.60);
+      tl.to("#e-b", { scale: 1.06, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 3 }, 24.20);
+      tl.fromTo("#e-s", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 24.00);
       window.__timelines["main"] = tl;
     </script>
   </body>
