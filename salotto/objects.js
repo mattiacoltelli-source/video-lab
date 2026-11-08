@@ -19,9 +19,11 @@ export const KINDS = {
   cabinet: { label: 'Mobile', w: 1.2, d: 0.4, h: 0.85, mat: 'bianco', round: false, faces: ['front', 'top'] },
   rug: { label: 'Tappeto', w: 2.0, d: 1.4, h: 0.015, mat: 'beige', round: true, faces: ['top'] },
   box: { label: 'Scatola', w: 1.0, d: 0.6, h: 1.0, mat: 'grigio', round: false, faces: ['front', 'top'] },
+  banky: { label: 'Banky Big', w: 0.88, d: 0.51, h: 0.23, mat: 'rame', round: false, faces: [] },        // tavolino Peltia, lamiera piegata (misure del catalogo)
+  bankys: { label: 'Banky Small', w: 0.69, d: 0.44, h: 0.17, mat: 'rame', round: false, faces: [] },
   statue: { label: 'Statua', w: 0.5, d: 0.5, h: 2.0, mat: 'marmo', round: false, faces: [] }, // misure del basamento e altezza totale
 };
-export const MATS = { rovere: ['Rovere', '#c2a47c'], noce: ['Noce', '#5e3d2a'], bianco: ['Bianco', '#e8e6df'], beige: ['Beige', '#d2c7b2'], grigio: ['Grigio', '#868a90'], nero: ['Nero', '#26262a'], rosso: ['Rosso', '#9e302b'], marmo: ['Marmo', '#f1efea'] };
+export const MATS = { rovere: ['Rovere', '#c2a47c'], noce: ['Noce', '#5e3d2a'], bianco: ['Bianco', '#e8e6df'], beige: ['Beige', '#d2c7b2'], grigio: ['Grigio', '#868a90'], nero: ['Nero', '#26262a'], rosso: ['Rosso', '#9e302b'], marmo: ['Marmo', '#f1efea'], rame: ['Rame', '#bf9b8b'] };
 const LIGHT = 0.8; // le luci della scena sommano piu' di 1: senza questo i colori chiari escono bruciati (il rovere diventava giallo acceso)
 const PHOTO_HINT = { table: 'La foto va sul piano: per esempio un marmo o un legno.', coffee: 'La foto va sul piano: per esempio un marmo o un legno.', rug: 'La foto va sopra il tappeto.', cabinet: 'Scegli se metterla davanti o sopra.', box: 'Scegli se metterla davanti o sopra.' };
 
@@ -152,6 +154,25 @@ function build(o, tex) {
       ball(0, 1.572, -0.028, 0.092, 0.1, 0.1);                                         // capelli
       ball(0, 1.645, -0.088, 0.045, 0.045, 0.045);                                     // crocchia
       ball(0, 1.538, 0.1, 0.009, 0.017, 0.015);                                        // naso: indica il davanti
+      break;
+    }
+    case 'banky': case 'bankys': { // un'unica lamiera da 4 mm: piano, curva smussata ai lati e piedino che rientra (profilo di fronte, estruso in profondita')
+      const f = w / 2, P = [[0, h], [0.86 * f, h], [f, 0.55 * h], [0.94 * f, 0.16 * h], [0.78 * f, 0.02 * h], [0.6 * f, 0]];
+      let pts = [...P.slice(1).reverse().map(([x, y]) => [-x, y]), ...P]; // sinistra + destra, dal piedino sinistro al destro
+      for (let it = 0; it < 3; it++) { // taglio degli spigoli: le curve della lamiera
+        const nx = [pts[0]];
+        for (let k = 0; k < pts.length - 1; k++) { const [ax, ay] = pts[k], [bx, by] = pts[k + 1]; nx.push([0.75 * ax + 0.25 * bx, 0.75 * ay + 0.25 * by], [0.25 * ax + 0.75 * bx, 0.25 * ay + 0.75 * by]); }
+        nx.push(pts[pts.length - 1]); pts = nx;
+      }
+      const t = 0.004, outer = [], inner = [];
+      pts.forEach(([x, y], k) => {
+        const [px, py] = pts[Math.max(0, k - 1)], [qx, qy] = pts[Math.min(pts.length - 1, k + 1)];
+        let tx = qx - px, ty = qy - py; const L = Math.hypot(tx, ty) || 1; tx /= L; ty /= L;
+        outer.push(new THREE.Vector2(x - ty * t / 2, y + tx * t / 2)); inner.push(new THREE.Vector2(x + ty * t / 2, y - tx * t / 2));
+      });
+      const shape = new THREE.Shape([...outer, ...inner.reverse()]);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: false, steps: 1 }).translate(0, 0, -d / 2);
+      put(geo, new THREE.MeshLambertMaterial({ color: base, side: THREE.DoubleSide }), 0, 0, 0);
       break;
     }
     case 'rug':
