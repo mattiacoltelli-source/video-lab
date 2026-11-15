@@ -21,6 +21,7 @@ export const KINDS = {
   box: { label: 'Scatola', w: 1.0, d: 0.6, h: 1.0, mat: 'grigio', round: false, faces: ['front', 'top'] },
   banky: { label: 'Banky Big', w: 0.88, d: 0.51, h: 0.23, mat: 'rame', round: false, faces: [] },        // tavolino Peltia, lamiera piegata (misure del catalogo)
   bankys: { label: 'Banky Small', w: 0.69, d: 0.44, h: 0.17, mat: 'rame', round: false, faces: [] },
+  zeta: { label: 'Tavolino Z', w: 0.62, d: 0.24, h: 0.5, mat: 'nero', round: false, faces: [] },          // lamiera da 3 mm a Z: piano 50, base 62, alto 50, profondita' 24 cm (disegno tecnico)
   statue: { label: 'Statua', w: 0.5, d: 0.5, h: 2.0, mat: 'marmo', round: false, faces: [] }, // misure del basamento e altezza totale
 };
 export const MATS = { rovere: ['Rovere', '#c2a47c'], noce: ['Noce', '#5e3d2a'], bianco: ['Bianco', '#e8e6df'], beige: ['Beige', '#d2c7b2'], grigio: ['Grigio', '#868a90'], nero: ['Nero', '#26262a'], rosso: ['Rosso', '#9e302b'], marmo: ['Marmo', '#f1efea'], rame: ['Rame', '#bf9b8b'] };
@@ -172,6 +173,31 @@ function build(o, tex) {
       });
       const shape = new THREE.Shape([...outer, ...inner.reverse()]);
       const geo = new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: false, steps: 1 }).translate(0, 0, -d / 2);
+      put(geo, new THREE.MeshLambertMaterial({ color: base, side: THREE.DoubleSide }), 0, 0, 0);
+      break;
+    }
+    case 'zeta': { // un'unica lamiera da 3 mm piegata a Z: piano in alto, diagonale e base; la larghezza (z) si stringe a clessidra a meta' percorso
+      const Y = [[100, 497], [585, 497], [28, 36], [70, 3], [620, 3]]; // profilo di fronte in mm (x, y); la scala porta alle misure w, h
+      let pts = Y;
+      for (let it = 0; it < 2; it++) { const nx = [pts[0]]; for (let k = 0; k < pts.length - 1; k++) { const [ax, ay] = pts[k], [bx, by] = pts[k + 1]; nx.push([0.8 * ax + 0.2 * bx, 0.8 * ay + 0.2 * by], [0.2 * ax + 0.8 * bx, 0.2 * ay + 0.8 * by]); } nx.push(pts[pts.length - 1]); pts = nx; }
+      const sx = w / 620, sy = h / 500, t = 0.003, N = pts.length, len = [0];
+      for (let k = 1; k < N; k++) len.push(len[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+      const pos = [], idx = [];
+      pts.forEach(([x, y], k) => {
+        const u = len[k] / len[N - 1], wz = d * (1 - 0.82 * Math.exp(-(((u - 0.5) / 0.15) ** 2))) / 2;
+        const [px, py] = pts[Math.max(0, k - 1)], [qx, qy] = pts[Math.min(N - 1, k + 1)];
+        let tx = (qx - px) * sx, ty = (qy - py) * sy; const L = Math.hypot(tx, ty) || 1; tx /= L; ty /= L;
+        const cx = x * sx, cy = y * sy, nx = -ty * t / 2, ny = tx * t / 2;
+        for (const z of [-wz, wz]) pos.push(cx + nx, cy + ny, z, cx - nx, cy - ny, z); // per ogni punto: faccia alta e bassa, a z negativa e positiva
+      });
+      for (let k = 0; k < N - 1; k++) {
+        const a = k * 4, b = (k + 1) * 4;
+        // faccia alta (indici 0,4 = z-,z+ del lato +n), faccia bassa (1,5) e due spigoli laterali
+        idx.push(a, b, a + 2, a + 2, b, b + 2); idx.push(a + 1, a + 3, b + 1, a + 3, b + 3, b + 1);
+        idx.push(a, a + 1, b, b, a + 1, b + 1); idx.push(a + 2, b + 2, a + 3, a + 3, b + 2, b + 3);
+      }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals();
+      geo.translate(-w * 0.5, 0, 0);
       put(geo, new THREE.MeshLambertMaterial({ color: base, side: THREE.DoubleSide }), 0, 0, 0);
       break;
     }
